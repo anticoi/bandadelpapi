@@ -1,0 +1,244 @@
+document.addEventListener('DOMContentLoaded', () => {
+    console.log('Chatbot La Banda del Papi cargado');
+    const WHATSAPP_NUMBER = '56994775389';
+    const WHATSAPP_URL = 'https://wa.me/' + WHATSAPP_NUMBER + '?text=' + encodeURIComponent('Hola, vengo del sitio web de La Banda del Papi y me gustaría más información');
+
+    // === STYLES ===
+    var style = document.createElement('style');
+    style.textContent = '' +
+        '@keyframes chatbot-pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.3; } }' +
+        '#chatbot-toggle { position: fixed; bottom: 24px; right: 24px; width: 60px; height: 60px; border-radius: 50%; border: none; cursor: pointer; z-index: 99999; color: black; background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); box-shadow: 0 4px 20px rgba(255,200,0,0.5); display: flex; align-items: center; justify-content: center; font-size: 28px; transition: transform 0.2s ease; }' +
+        '#chatbot-toggle:hover { transform: scale(1.1); }' +
+        '#chatbot-window { position: fixed; bottom: 100px; right: 24px; width: 360px; max-width: calc(100vw - 48px); height: 500px; max-height: calc(100vh - 140px); background: #1a0b2e; border: 1px solid rgba(255,200,0,0.3); border-radius: 16px; box-shadow: 0 10px 40px rgba(0,0,0,0.5); z-index: 99999; display: none; flex-direction: column; overflow: hidden; font-family: inherit; }' +
+        '#chatbot-header { background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); padding: 16px; display: flex; align-items: center; gap: 12px; color: black; }' +
+        '#chatbot-header-icon { width: 40px; height: 40px; background: rgba(0,0,0,0.15); border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }' +
+        '#chatbot-header-title { font-weight: bold; font-size: 16px; color: black; }' +
+        '#chatbot-header-sub { font-size: 12px; opacity: 0.8; color: black; }' +
+        '#chatbot-close { margin-left: auto; background: none; border: none; color: black; cursor: pointer; padding: 4px; }' +
+        '#chatbot-messages { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }' +
+        '.chatbot-msg-bot { align-self: flex-start; background: rgba(255,200,0,0.1); border: 1px solid rgba(255,200,0,0.2); padding: 10px 16px; border-radius: 12px 12px 12px 4px; color: #e0e0e0; font-size: 14px; line-height: 1.5; max-width: 85%; white-space: pre-wrap; }' +
+        '.chatbot-msg-user { align-self: flex-end; background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); border: none; padding: 10px 16px; border-radius: 12px 12px 4px 12px; color: black; font-size: 14px; line-height: 1.5; max-width: 80%; white-space: pre-wrap; font-weight: 600; }' +
+        '#chatbot-loading { display: none; padding: 8px 16px; color: #FFC800; font-size: 13px; align-items: center; gap: 8px; }' +
+        '#chatbot-loading.visible { display: flex; }' +
+        '#chatbot-input-area { padding: 12px; border-top: 1px solid rgba(255,255,255,0.1); display: flex; gap: 8px; }' +
+        '#chatbot-input { flex: 1; background: #0c0612; border: 1px solid rgba(255,200,0,0.3); border-radius: 8px; padding: 10px 14px; color: white; font-size: 14px; outline: none; }' +
+        '#chatbot-input:disabled { opacity: 0.5; }' +
+        '#chatbot-input:focus { border-color: #FFC800; }' +
+        '#chatbot-send { background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); border: none; border-radius: 8px; padding: 10px 16px; color: black; cursor: pointer; display: flex; align-items: center; justify-content: center; }' +
+        '#chatbot-send:disabled { opacity: 0.5; cursor: not-allowed; }' +
+        '#chatbot-captcha-area { padding: 12px 16px; background: rgba(255,87,34,0.1); border-top: 1px solid rgba(255,87,34,0.3); display: none; flex-direction: column; gap: 10px; }' +
+        '#chatbot-captcha-area.visible { display: flex; }' +
+        '#chatbot-captcha-label { color: #FF5722; font-size: 13px; font-weight: 600; }' +
+        '#chatbot-name-input { background: #0c0612; border: 1px solid rgba(255,200,0,0.4); border-radius: 8px; padding: 8px 12px; color: white; font-size: 14px; outline: none; }' +
+        '#chatbot-name-input:focus { border-color: #FFC800; }' +
+        '#chatbot-captcha-row { display: flex; gap: 8px; align-items: center; }' +
+        '#chatbot-captcha-input { flex: 1; background: #0c0612; border: 1px solid rgba(255,87,34,0.4); border-radius: 8px; padding: 8px 12px; color: white; font-size: 14px; outline: none; }' +
+        '#chatbot-captcha-input:focus { border-color: #FF5722; }' +
+        '#chatbot-captcha-btn { background: #FF5722; border: none; border-radius: 8px; padding: 8px 16px; color: white; cursor: pointer; font-size: 13px; font-weight: 600; white-space: nowrap; }' +
+        '#chatbot-captcha-btn:hover { background: #FF6D00; }' +
+        '#chatbot-wa-area { padding: 10px 12px; background: rgba(12,6,18,0.8); border-top: 1px solid rgba(255,255,255,0.05); text-align: center; }' +
+        '#chatbot-wa-btn { display: inline-flex; align-items: center; gap: 6px; background: #25D366; color: white; text-decoration: none; border-radius: 8px; padding: 8px 16px; font-size: 13px; font-weight: 600; }' +
+        '#chatbot-wa-btn:hover { background: #1ebe5a; }';
+    document.head.appendChild(style);
+
+    // === STATE ===
+    var sessionToken = null;
+    var captchaId = null;
+    var userName = null;
+    var chatOpened = false;
+
+    // === BUTTON ===
+    var toggle = document.createElement('button');
+    toggle.id = 'chatbot-toggle';
+    toggle.setAttribute('aria-label', 'Abrir chat');
+    toggle.innerHTML = '\uD83E\uDD18';
+    document.body.appendChild(toggle);
+
+    // === WINDOW ===
+    var win = document.createElement('div');
+    win.id = 'chatbot-window';
+    win.innerHTML =
+        '<div id="chatbot-header">' +
+            '<div id="chatbot-header-icon">' +
+                '<svg width="24" height="24" fill="none" stroke="black" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3" /></svg>' +
+            '</div>' +
+            '<div><div id="chatbot-header-title">La Banda del Papi</div><div id="chatbot-header-sub">Asistente Cumbiero</div></div>' +
+            '<button id="chatbot-close" aria-label="Cerrar chat"><svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg></button>' +
+        '</div>' +
+        '<div id="chatbot-messages">' +
+            '<div class="chatbot-msg-bot">\u00A1Hola! Soy el asistente virtual de La Banda del Papi \uD83E\uDD18\uD83C\uDFB5. Para comenzar, cu\u00e9ntanos tu nombre y resuelve la verificaci\u00f3n.</div>' +
+        '</div>' +
+        '<div id="chatbot-loading"><span style="display:inline-block;width:8px;height:8px;background:#FFC800;border-radius:50%;animation:chatbot-pulse 1s infinite;"></span> La Banda del Papi est\u00E1 escribiendo...</div>' +
+        '<div id="chatbot-captcha-area">' +
+            '<div id="chatbot-captcha-label"></div>' +
+            '<input id="chatbot-name-input" type="text" placeholder="Tu nombre" autocomplete="off">' +
+            '<div id="chatbot-captcha-row">' +
+                '<input id="chatbot-captcha-input" type="number" placeholder="Respuesta del captcha" autocomplete="off">' +
+                '<button id="chatbot-captcha-btn">Iniciar chat</button>' +
+            '</div>' +
+        '</div>' +
+        '<div id="chatbot-input-area">' +
+            '<input id="chatbot-input" type="text" placeholder="Escribe tu mensaje..." autocomplete="off" disabled>' +
+            '<button id="chatbot-send" aria-label="Enviar" disabled><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg></button>' +
+        '</div>' +
+        '<div id="chatbot-wa-area">' +
+            '<a id="chatbot-wa-btn" href="' + WHATSAPP_URL + '" target="_blank"><svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.821 11.821 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg> Hablar por WhatsApp</a>' +
+        '</div>';
+    document.body.appendChild(win);
+
+    // === ELEMENTS ===
+    var closeBtn = document.getElementById('chatbot-close');
+    var input = document.getElementById('chatbot-input');
+    var sendBtn = document.getElementById('chatbot-send');
+    var messages = document.getElementById('chatbot-messages');
+    var loading = document.getElementById('chatbot-loading');
+    var captchaArea = document.getElementById('chatbot-captcha-area');
+    var captchaLabel = document.getElementById('chatbot-captcha-label');
+    var captchaInput = document.getElementById('chatbot-captcha-input');
+    var captchaBtn = document.getElementById('chatbot-captcha-btn');
+    var nameInput = document.getElementById('chatbot-name-input');
+
+    // === CAPTCHA ===
+    async function fetchCaptcha() {
+        try {
+            var res = await fetch('/api/chat');
+            var data = await res.json();
+            if (data.id && data.question) {
+                captchaId = data.id;
+                captchaLabel.textContent = '\uD83E\uDD16 Verificación: ' + data.question;
+                captchaArea.classList.add('visible');
+                nameInput.value = '';
+                captchaInput.value = '';
+                nameInput.focus();
+            }
+        } catch (err) {
+            console.error('Error fetching captcha:', err);
+        }
+    }
+
+    async function verifyCaptcha() {
+        var name = nameInput.value.trim();
+        var answer = captchaInput.value.trim();
+        if (!name) {
+            nameInput.style.borderColor = '#FF5722';
+            nameInput.focus();
+            return;
+        }
+        if (!answer) {
+            captchaInput.style.borderColor = '#FF5722';
+            captchaInput.focus();
+            return;
+        }
+        captchaBtn.disabled = true;
+        captchaBtn.textContent = 'Verificando...';
+        try {
+            var res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    verifyCaptcha: true,
+                    captchaId: captchaId,
+                    captchaAnswer: parseInt(answer, 10),
+                    name: name
+                })
+            });
+            var data = await res.json();
+            if (res.ok && data.verified && data.token) {
+                sessionToken = data.token;
+                userName = name;
+                captchaArea.classList.remove('visible');
+                input.disabled = false;
+                sendBtn.disabled = false;
+                addMessage('\u00A1Hola, ' + name + '! \uD83D\uDC4B Ya puedes hacer tus preguntas. \u00BFEn qu\u00E9 te puedo ayudar?', 'bot');
+                input.focus();
+            } else if (data.captcha) {
+                captchaId = data.captcha.id;
+                captchaLabel.textContent = '\u274C Incorrecto. ' + data.captcha.question;
+                captchaInput.value = '';
+                captchaInput.focus();
+            }
+        } catch (err) {
+            console.error('Error verifying captcha:', err);
+        } finally {
+            captchaBtn.disabled = false;
+            captchaBtn.textContent = 'Iniciar chat';
+        }
+    }
+
+    captchaBtn.addEventListener('click', verifyCaptcha);
+    captchaInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') verifyCaptcha();
+    });
+    nameInput.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') captchaInput.focus();
+    });
+
+    // === EVENTS ===
+    toggle.addEventListener('click', function () {
+        win.style.display = win.style.display === 'flex' ? 'none' : 'flex';
+        if (win.style.display === 'flex' && !chatOpened) {
+            chatOpened = true;
+            if (!sessionToken) {
+                fetchCaptcha();
+            }
+        }
+    });
+    closeBtn.addEventListener('click', function () {
+        win.style.display = 'none';
+    });
+
+    function addMessage(text, sender) {
+        var div = document.createElement('div');
+        div.className = sender === 'user' ? 'chatbot-msg-user' : 'chatbot-msg-bot';
+        div.textContent = text;
+        messages.appendChild(div);
+        messages.scrollTop = messages.scrollHeight;
+    }
+
+    async function sendMessage() {
+        var text = input.value.trim();
+        if (!text || !sessionToken) return;
+        addMessage(text, 'user');
+        input.value = '';
+        loading.classList.add('visible');
+        try {
+            var res = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message: text,
+                    token: sessionToken,
+                    name: userName
+                })
+            });
+            var data = await res.json();
+            if (!res.ok) {
+                if (data.captcha) {
+                    sessionToken = null;
+                    captchaId = data.captcha.id;
+                    captchaLabel.textContent = '\uD83E\uDD16 ' + data.captcha.question;
+                    captchaArea.classList.add('visible');
+                    input.disabled = true;
+                    sendBtn.disabled = true;
+                    nameInput.value = '';
+                    captchaInput.value = '';
+                    nameInput.focus();
+                } else {
+                    throw new Error(data.error || 'Error');
+                }
+            } else if (data.reply) {
+                addMessage(data.reply, 'bot');
+            }
+        } catch (err) {
+            console.error('Chat error:', err);
+            addMessage('Perd\u00f3n, no pude conectar con la IA en este momento. Puedes escribirnos por WhatsApp al +56 9 9477 5389.', 'bot');
+        } finally {
+            loading.classList.remove('visible');
+        }
+    }
+
+    sendBtn.addEventListener('click', sendMessage);
+    input.addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') sendMessage();
+    });
+});
