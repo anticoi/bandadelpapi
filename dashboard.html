@@ -169,7 +169,22 @@
         <div id="panel-fotos" class="panel">
             <div id="fotos-msg"></div>
             <div class="form">
-                <h3>Agregar foto a la galería</h3>
+                <h3>Subir foto a la galería</h3>
+                <form id="upload-photo-form" enctype="multipart/form-data">
+                    <div class="form-row">
+                        <div class="form-field"><label>Archivo de imagen</label><input type="file" id="upload-file" accept="image/*" required></div>
+                        <div class="form-field"><label>Título</label><input type="text" id="upload-title" placeholder="Ej: Show en vivo"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-field"><label>Descripción</label><input type="text" id="upload-description" placeholder="Descripción de la foto"></div>
+                        <div class="form-field"><label>Orden</label><input type="number" id="upload-orden" value="0" style="width:80px"></div>
+                    </div>
+                    <button type="submit" class="form-btn" id="upload-btn">Subir foto</button>
+                    <p class="text-gray-500 text-xs mt-2">La foto se sube directamente a Vercel Blob y queda disponible al instante en la galería.</p>
+                </form>
+            </div>
+            <div class="form">
+                <h3>O agregar foto por nombre de archivo existente</h3>
                 <div class="form-row">
                     <div class="form-field"><label>Título</label><input type="text" id="photo-title" placeholder="Ej: Show en vivo"></div>
                     <div class="form-field"><label>Archivo (ruta en /fotos/)</label><input type="text" id="photo-filename" placeholder="Ej: foto-nueva.jpg"></div>
@@ -529,6 +544,42 @@
             if (!title || !filename) { showMsg('fotos-msg', 'Título y archivo son obligatorios', 'err'); return; }
             var res = await fetch('/api/photos?password=' + encodeURIComponent(adminPassword), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: title, filename: filename, description: description, orden: orden, publicado: true }) });
             if (res.ok) { showMsg('fotos-msg', 'Foto agregada', 'ok'); document.getElementById('photo-title').value = ''; document.getElementById('photo-filename').value = ''; document.getElementById('photo-description').value = ''; loadFotos(); }
+        });
+
+        // === UPLOAD FOTO DIRECTO ===
+        document.getElementById('upload-photo-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            var fileInput = document.getElementById('upload-file');
+            var title = document.getElementById('upload-title').value.trim();
+            var description = document.getElementById('upload-description').value.trim();
+            var orden = document.getElementById('upload-orden').value;
+            if (!fileInput.files[0]) { showMsg('fotos-msg', 'Selecciona un archivo', 'err'); return; }
+            if (!title) { showMsg('fotos-msg', 'Título es obligatorio', 'err'); return; }
+            var btn = document.getElementById('upload-btn');
+            btn.textContent = 'Subiendo...';
+            btn.disabled = true;
+            try {
+                var formData = new FormData();
+                formData.append('file', fileInput.files[0]);
+                formData.append('title', title);
+                formData.append('description', description);
+                formData.append('orden', orden);
+                var res = await fetch('/api/upload?password=' + encodeURIComponent(adminPassword), { method: 'POST', body: formData });
+                var data = await res.json();
+                if (res.ok && data.ok) {
+                    showMsg('fotos-msg', 'Foto subida con exito', 'ok');
+                    document.getElementById('upload-title').value = '';
+                    document.getElementById('upload-description').value = '';
+                    fileInput.value = '';
+                    loadFotos();
+                } else {
+                    showMsg('fotos-msg', data.error || 'Error al subir', 'err');
+                }
+            } catch (err) {
+                showMsg('fotos-msg', 'Error: ' + err.message, 'err');
+            }
+            btn.textContent = 'Subir foto';
+            btn.disabled = false;
         });
 
         // === VIDEOS ===

@@ -10,7 +10,8 @@
     "api/newsletter.js": { "maxDuration": 10 },
     "api/photos.js": { "maxDuration": 10 },
     "api/videos.js": { "maxDuration": 10 },
-    "api/config.js": { "maxDuration": 10 }
+    "api/config.js": { "maxDuration": 10 },
+    "api/upload.js": { "maxDuration": 30 }
   },
   "headers": [
     {
