@@ -4,7 +4,7 @@ let pool = null;
 
 function getPool() {
     if (!pool) {
-        const connectionString = process.env.POSTGRES_URL || process.env.PRISMA_DATABASE_URL;
+        const connectionString = process.env.POSTGRES_URL || process.env.PRISMA_DATABASE_URL || process.env.DATABASE_URL;
         if (!connectionString) return null;
         pool = new Pool({
             connectionString,
@@ -52,4 +52,24 @@ async function addChatEntry(entry) {
     }
 }
 
-module.exports = { addChatEntry, ensureTable };
+async function getChatHistory(limit) {
+    const p = getPool();
+    if (!p) return [];
+    try {
+        const result = await p.query(
+            'SELECT timestamp, user_name, message, reply FROM chat_logs ORDER BY timestamp DESC LIMIT $1',
+            [limit || 500]
+        );
+        return result.rows.map(r => ({
+            timestamp: r.timestamp,
+            user: r.user_name,
+            message: r.message,
+            reply: r.reply
+        }));
+    } catch (err) {
+        console.error('Error fetching chat logs:', err.message);
+        return [];
+    }
+}
+
+module.exports = { addChatEntry, getChatHistory, ensureTable };
