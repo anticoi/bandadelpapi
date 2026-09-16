@@ -87,6 +87,9 @@
             <div class="tab" data-panel="blog">Blog</div>
             <div class="tab" data-panel="testimonios">Testimonios</div>
             <div class="tab" data-panel="newsletter">Newsletter</div>
+            <div class="tab" data-panel="fotos">Fotos</div>
+            <div class="tab" data-panel="videos">Videos</div>
+            <div class="tab" data-panel="config">Config</div>
         </div>
 
         <!-- CHAT -->
@@ -161,6 +164,69 @@
             <div class="toolbar"><h2>Lista de suscriptores</h2><button id="refresh-newsletter-btn">Actualizar</button></div>
             <div id="newsletter-container"></div>
         </div>
+
+        <!-- FOTOS -->
+        <div id="panel-fotos" class="panel">
+            <div id="fotos-msg"></div>
+            <div class="form">
+                <h3>Agregar foto a la galería</h3>
+                <div class="form-row">
+                    <div class="form-field"><label>Título</label><input type="text" id="photo-title" placeholder="Ej: Show en vivo"></div>
+                    <div class="form-field"><label>Archivo (ruta en /fotos/)</label><input type="text" id="photo-filename" placeholder="Ej: foto-nueva.jpg"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field"><label>Descripción</label><input type="text" id="photo-description" placeholder="Descripción de la foto"></div>
+                    <div class="form-field"><label>Orden</label><input type="number" id="photo-orden" value="0" style="width:80px"></div>
+                </div>
+                <button class="form-btn" id="add-photo-btn">Agregar foto</button>
+            </div>
+            <div class="toolbar"><h2>Fotos en la galería</h2><button id="refresh-fotos-btn">Actualizar</button></div>
+            <div id="fotos-container"></div>
+        </div>
+
+        <!-- VIDEOS -->
+        <div id="panel-videos" class="panel">
+            <div id="videos-msg"></div>
+            <div class="form">
+                <h3>Agregar video de YouTube</h3>
+                <div class="form-row">
+                    <div class="form-field"><label>Título</label><input type="text" id="video-title" placeholder="Ej: Nuevo videoclip"></div>
+                    <div class="form-field"><label>ID de YouTube</label><input type="text" id="video-youtube-id" placeholder="Ej: dQw4w9WgXcQ"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field"><label>Descripción</label><input type="text" id="video-description" placeholder="Descripción del video"></div>
+                    <div class="form-field"><label>Orden</label><input type="number" id="video-orden" value="0" style="width:80px"></div>
+                </div>
+                <p class="text-gray-500 text-xs mb-2">El ID de YouTube es el código que aparece después de ?v= en la URL. Ej: youtube.com/watch?v=<strong>dQw4w9WgXcQ</strong></p>
+                <button class="form-btn" id="add-video-btn">Agregar video</button>
+            </div>
+            <div class="toolbar"><h2>Videos en el sitio</h2><button id="refresh-videos-btn">Actualizar</button></div>
+            <div id="videos-container"></div>
+        </div>
+
+        <!-- CONFIG -->
+        <div id="panel-config" class="panel">
+            <div id="config-msg"></div>
+            <div class="form">
+                <h3>Configuración de contacto y redes</h3>
+                <div class="form-row">
+                    <div class="form-field"><label>Número WhatsApp (solo dígitos, ej: 56994775389)</label><input type="text" id="cfg-whatsapp-number" placeholder="56994775389"></div>
+                    <div class="form-field"><label>WhatsApp a mostrar</label><input type="text" id="cfg-whatsapp-display" placeholder="+56 9 9477 5389"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field"><label>Email de contacto</label><input type="email" id="cfg-contact-email" placeholder="contacto@labandadelpapi.cl"></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field"><label>Instagram URL</label><input type="text" id="cfg-instagram-url" placeholder="https://instagram.com/..."></div>
+                    <div class="form-field"><label>TikTok URL</label><input type="text" id="cfg-tiktok-url" placeholder="https://tiktok.com/@..."></div>
+                </div>
+                <div class="form-row">
+                    <div class="form-field"><label>YouTube URL</label><input type="text" id="cfg-youtube-url" placeholder="https://youtube.com/@..."></div>
+                    <div class="form-field"><label>Spotify Artist URL</label><input type="text" id="cfg-spotify-url" placeholder="https://open.spotify.com/..."></div>
+                </div>
+                <button class="form-btn" id="save-config-btn">Guardar configuración</button>
+            </div>
+        </div>
     </div>
 
     <script>
@@ -192,6 +258,9 @@
                 else if (fn === 'blog') loadBlog();
                 else if (fn === 'testimonios') loadTestimonios();
                 else if (fn === 'newsletter') loadNewsletter();
+                else if (fn === 'fotos') loadFotos();
+                else if (fn === 'videos') loadVideos();
+                else if (fn === 'config') loadConfig();
             });
         });
 
@@ -201,6 +270,8 @@
         document.getElementById('refresh-blog-btn').addEventListener('click', loadBlog);
         document.getElementById('refresh-testimonios-btn').addEventListener('click', loadTestimonios);
         document.getElementById('refresh-newsletter-btn').addEventListener('click', loadNewsletter);
+        document.getElementById('refresh-fotos-btn').addEventListener('click', loadFotos);
+        document.getElementById('refresh-videos-btn').addEventListener('click', loadVideos);
 
         function escapeHtml(text) {
             var div = document.createElement('div');
@@ -423,6 +494,108 @@
             el.textContent = text;
             setTimeout(function() { el.className = ''; el.textContent = ''; }, 3000);
         }
+
+        // === FOTOS ===
+        async function loadFotos() {
+            try {
+                var res = await fetch('/api/photos?password=' + encodeURIComponent(adminPassword));
+                var data = await res.json();
+                var container = document.getElementById('fotos-container');
+                container.innerHTML = '';
+                if (!data.photos || data.photos.length === 0) { container.innerHTML = '<div class="empty">No hay fotos. Agrega la primera arriba.</div>'; return; }
+                data.photos.forEach(function(photo) {
+                    var div = document.createElement('div');
+                    div.className = 'entry';
+                    var badge = photo.publicado ? '<span class="badge badge-aprobado">Publicada</span>' : '<span class="badge badge-pendiente-aprob">Oculta</span>';
+                    var imgPath = photo.filename.startsWith('fotos/') || photo.filename.startsWith('http') ? photo.filename : 'fotos/' + photo.filename;
+                    div.innerHTML = '<div style="display:flex;gap:12px;align-items:center;"><img src="' + imgPath + '" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,200,0,0.2);"><div style="flex:1;"><div class="meta"><span class="user">' + escapeHtml(photo.title) + '</span><span>Orden: ' + photo.orden + ' ' + badge + '</span></div><div class="question">' + escapeHtml(photo.description) + '</div><div style="font-size:11px;color:#666;">' + escapeHtml(photo.filename) + '</div></div><button class="btn-sm" data-id="' + photo.id + '">Eliminar</button></div>';
+                    container.appendChild(div);
+                });
+                container.querySelectorAll('.btn-sm').forEach(function(btn) {
+                    btn.addEventListener('click', async function() {
+                        if (!confirm('¿Eliminar esta foto?')) return;
+                        await fetch('/api/photos?id=' + this.dataset.id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
+                        loadFotos();
+                    });
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        document.getElementById('add-photo-btn').addEventListener('click', async function() {
+            var title = document.getElementById('photo-title').value.trim();
+            var filename = document.getElementById('photo-filename').value.trim();
+            var description = document.getElementById('photo-description').value.trim();
+            var orden = parseInt(document.getElementById('photo-orden').value) || 0;
+            if (!title || !filename) { showMsg('fotos-msg', 'Título y archivo son obligatorios', 'err'); return; }
+            var res = await fetch('/api/photos?password=' + encodeURIComponent(adminPassword), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: title, filename: filename, description: description, orden: orden, publicado: true }) });
+            if (res.ok) { showMsg('fotos-msg', 'Foto agregada', 'ok'); document.getElementById('photo-title').value = ''; document.getElementById('photo-filename').value = ''; document.getElementById('photo-description').value = ''; loadFotos(); }
+        });
+
+        // === VIDEOS ===
+        async function loadVideos() {
+            try {
+                var res = await fetch('/api/videos?password=' + encodeURIComponent(adminPassword));
+                var data = await res.json();
+                var container = document.getElementById('videos-container');
+                container.innerHTML = '';
+                if (!data.videos || data.videos.length === 0) { container.innerHTML = '<div class="empty">No hay videos. Agrega el primero arriba.</div>'; return; }
+                data.videos.forEach(function(video) {
+                    var div = document.createElement('div');
+                    div.className = 'entry';
+                    var badge = video.publicado ? '<span class="badge badge-aprobado">Publicado</span>' : '<span class="badge badge-pendiente-aprob">Oculto</span>';
+                    div.innerHTML = '<div style="display:flex;gap:12px;align-items:center;"><img src="https://img.youtube.com/vi/' + video.youtube_id + '/default.jpg" style="width:80px;height:60px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,200,0,0.2);"><div style="flex:1;"><div class="meta"><span class="user">' + escapeHtml(video.title) + '</span><span>Orden: ' + video.orden + ' ' + badge + '</span></div><div class="question">' + escapeHtml(video.description) + '</div><div style="font-size:11px;color:#666;">ID: ' + escapeHtml(video.youtube_id) + '</div></div><button class="btn-sm" data-id="' + video.id + '">Eliminar</button></div>';
+                    container.appendChild(div);
+                });
+                container.querySelectorAll('.btn-sm').forEach(function(btn) {
+                    btn.addEventListener('click', async function() {
+                        if (!confirm('¿Eliminar este video?')) return;
+                        await fetch('/api/videos?id=' + this.dataset.id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
+                        loadVideos();
+                    });
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        document.getElementById('add-video-btn').addEventListener('click', async function() {
+            var title = document.getElementById('video-title').value.trim();
+            var youtube_id = document.getElementById('video-youtube-id').value.trim();
+            var description = document.getElementById('video-description').value.trim();
+            var orden = parseInt(document.getElementById('video-orden').value) || 0;
+            if (!title || !youtube_id) { showMsg('videos-msg', 'Título e ID de YouTube son obligatorios', 'err'); return; }
+            var res = await fetch('/api/videos?password=' + encodeURIComponent(adminPassword), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: title, youtube_id: youtube_id, description: description, orden: orden, publicado: true }) });
+            if (res.ok) { showMsg('videos-msg', 'Video agregado', 'ok'); document.getElementById('video-title').value = ''; document.getElementById('video-youtube-id').value = ''; document.getElementById('video-description').value = ''; loadVideos(); }
+        });
+
+        // === CONFIG ===
+        async function loadConfig() {
+            try {
+                var res = await fetch('/api/config');
+                var data = await res.json();
+                var c = data.config || {};
+                document.getElementById('cfg-whatsapp-number').value = c.whatsapp_number || '';
+                document.getElementById('cfg-whatsapp-display').value = c.whatsapp_display || '';
+                document.getElementById('cfg-contact-email').value = c.contact_email || '';
+                document.getElementById('cfg-instagram-url').value = c.instagram_url || '';
+                document.getElementById('cfg-tiktok-url').value = c.tiktok_url || '';
+                document.getElementById('cfg-youtube-url').value = c.youtube_url || '';
+                document.getElementById('cfg-spotify-url').value = c.spotify_artist_url || '';
+            } catch (err) { console.error(err); }
+        }
+
+        document.getElementById('save-config-btn').addEventListener('click', async function() {
+            var config = {
+                whatsapp_number: document.getElementById('cfg-whatsapp-number').value.trim(),
+                whatsapp_display: document.getElementById('cfg-whatsapp-display').value.trim(),
+                contact_email: document.getElementById('cfg-contact-email').value.trim(),
+                instagram_url: document.getElementById('cfg-instagram-url').value.trim(),
+                tiktok_url: document.getElementById('cfg-tiktok-url').value.trim(),
+                youtube_url: document.getElementById('cfg-youtube-url').value.trim(),
+                spotify_artist_url: document.getElementById('cfg-spotify-url').value.trim()
+            };
+            var res = await fetch('/api/config?password=' + encodeURIComponent(adminPassword), { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(config) });
+            if (res.ok) showMsg('config-msg', 'Configuración guardada', 'ok');
+            else showMsg('config-msg', 'Error al guardar', 'err');
+        });
     </script>
 </body>
 </html>

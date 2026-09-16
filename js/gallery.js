@@ -1,5 +1,4 @@
-// MODULAR PHOTO GALLERY - Loads photos from gallery.json
-// Photos are managed by editing gallery.json directly
+// MODULAR PHOTO GALLERY - Loads photos from /api/photos (DB) with fallback to gallery.json
 
 let galleryData = [];
 let currentPage = 1;
@@ -13,19 +12,38 @@ function getImagePath(filename) {
     return `fotos/${filename}`;
 }
 
-// Load gallery data from JSON file
+// Load gallery data from API first, fallback to JSON file
 async function loadGalleryData() {
     try {
-        const response = await fetch('gallery.json');
-        if (!response.ok) throw new Error('No se pudo cargar gallery.json');
-        const data = await response.json();
-        galleryData = data.photos || [];
+        const response = await fetch('/api/photos');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.photos && data.photos.length > 0) {
+                galleryData = data.photos.map(p => ({
+                    title: p.title,
+                    description: p.description || '',
+                    filename: p.filename
+                }));
+                currentPage = 1;
+                renderGallery();
+                return;
+            }
+        }
+        throw new Error('API vacia o error');
     } catch (error) {
-        console.error('Error cargando la galería:', error);
-        galleryData = [];
+        console.log('Cargando desde gallery.json (fallback)...');
+        try {
+            const response = await fetch('gallery.json');
+            if (!response.ok) throw new Error('No se pudo cargar gallery.json');
+            const data = await response.json();
+            galleryData = data.photos || [];
+        } catch (err) {
+            console.error('Error cargando la galería:', err);
+            galleryData = [];
+        }
+        currentPage = 1;
+        renderGallery();
     }
-    currentPage = 1;
-    renderGallery();
 }
 
 // Get total pages

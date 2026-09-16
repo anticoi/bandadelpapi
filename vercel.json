@@ -7,7 +7,10 @@
     "api/reservas.js": { "maxDuration": 10 },
     "api/blog.js": { "maxDuration": 10 },
     "api/testimonios.js": { "maxDuration": 10 },
-    "api/newsletter.js": { "maxDuration": 10 }
+    "api/newsletter.js": { "maxDuration": 10 },
+    "api/photos.js": { "maxDuration": 10 },
+    "api/videos.js": { "maxDuration": 10 },
+    "api/config.js": { "maxDuration": 10 }
   },
   "headers": [
     {
