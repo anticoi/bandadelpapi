@@ -21,7 +21,7 @@ async function ensureTable() {
     if (!p) return false;
     try {
         await p.query(`
-            CREATE TABLE IF NOT EXISTS chat_logs (
+            CREATE TABLE IF NOT EXISTS bdp_chat_logs (
                 id SERIAL PRIMARY KEY,
                 timestamp TIMESTAMPTZ DEFAULT NOW(),
                 user_name TEXT,
@@ -44,7 +44,7 @@ async function addChatEntry(entry) {
     }
     try {
         await p.query(
-            'INSERT INTO chat_logs (user_name, message, reply) VALUES ($1, $2, $3)',
+            'INSERT INTO bdp_chat_logs (user_name, message, reply) VALUES ($1, $2, $3)',
             [entry.user, entry.message, entry.reply]
         );
     } catch (err) {
@@ -57,7 +57,7 @@ async function getChatHistory(limit) {
     if (!p) return [];
     try {
         const result = await p.query(
-            'SELECT timestamp, user_name, message, reply FROM chat_logs ORDER BY timestamp DESC LIMIT $1',
+            'SELECT timestamp, user_name, message, reply FROM bdp_chat_logs ORDER BY timestamp DESC LIMIT $1',
             [limit || 500]
         );
         return result.rows.map(r => ({

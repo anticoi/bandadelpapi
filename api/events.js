@@ -21,7 +21,7 @@ async function ensureEventTable() {
     if (!p) return false;
     try {
         await p.query(`
-            CREATE TABLE IF NOT EXISTS events (
+            CREATE TABLE IF NOT EXISTS bdp_events (
                 id SERIAL PRIMARY KEY,
                 event_date DATE NOT NULL UNIQUE,
                 title TEXT NOT NULL,
@@ -68,7 +68,7 @@ module.exports = async (req, res) => {
     // GET: listar eventos (público, sin auth)
     if (req.method === 'GET') {
         try {
-            const result = await p.query('SELECT id, event_date, title, location, type FROM events ORDER BY event_date ASC');
+            const result = await p.query('SELECT id, event_date, title, location, type FROM bdp_events ORDER BY event_date ASC');
             const events = {};
             result.rows.forEach(r => {
                 const d = r.event_date;
@@ -108,7 +108,7 @@ module.exports = async (req, res) => {
 
         try {
             await p.query(
-                'INSERT INTO events (event_date, title, location, type) VALUES ($1, $2, $3, $4) ON CONFLICT (event_date) DO UPDATE SET title=$2, location=$3, type=$4',
+                'INSERT INTO bdp_events (event_date, title, location, type) VALUES ($1, $2, $3, $4) ON CONFLICT (event_date) DO UPDATE SET title=$2, location=$3, type=$4',
                 [date, title, location || '', type || 'private']
             );
             sendJson(res, 200, { ok: true });
@@ -126,7 +126,7 @@ module.exports = async (req, res) => {
             return;
         }
         try {
-            await p.query('DELETE FROM events WHERE id = $1', [id]);
+            await p.query('DELETE FROM bdp_events WHERE id = $1', [id]);
             sendJson(res, 200, { ok: true });
         } catch (err) {
             sendJson(res, 500, { error: err.message });
