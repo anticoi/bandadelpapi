@@ -8,7 +8,7 @@
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0c0612; color: #e0e0e0; min-height: 100vh; }
-        .header { background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); padding: 20px; text-align: center; }
+        .header { background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); padding: 20px; text-align: center; position: sticky; top: 0; z-index: 100; }
         .header h1 { color: black; font-size: 24px; }
         .header p { color: rgba(0,0,0,0.7); font-size: 13px; margin-top: 4px; }
         .login { max-width: 400px; margin: 60px auto; background: #160f2e; border-radius: 16px; padding: 40px; border: 1px solid rgba(255,200,0,0.2); }
@@ -18,46 +18,52 @@
         .login button { width: 100%; background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); border: none; border-radius: 8px; padding: 12px; color: black; font-size: 16px; font-weight: 600; cursor: pointer; }
         .login button:hover { opacity: 0.9; }
         .login .error { color: #FF5722; text-align: center; margin-top: 12px; font-size: 14px; }
-        .dashboard { max-width: 900px; margin: 0 auto; padding: 20px; }
-        .tabs { display: flex; gap: 8px; margin-bottom: 24px; }
-        .tab { flex: 1; background: #160f2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 12px; text-align: center; cursor: pointer; color: #888; font-weight: 600; transition: all 0.2s; }
+        .dashboard { max-width: 1000px; margin: 0 auto; padding: 20px; }
+        .tabs { display: flex; gap: 6px; margin-bottom: 24px; flex-wrap: wrap; }
+        .tab { background: #160f2e; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; padding: 10px 14px; text-align: center; cursor: pointer; color: #888; font-weight: 600; transition: all 0.2s; font-size: 13px; }
         .tab.active { background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); color: black; border-color: transparent; }
-        .stats { display: flex; gap: 16px; margin-bottom: 24px; }
-        .stat-card { flex: 1; background: #160f2e; border-radius: 12px; padding: 20px; border: 1px solid rgba(255,200,0,0.2); text-align: center; }
+        .tab:hover:not(.active) { border-color: rgba(255,200,0,0.3); }
+        .stats { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .stat-card { flex: 1; min-width: 120px; background: #160f2e; border-radius: 12px; padding: 20px; border: 1px solid rgba(255,200,0,0.2); text-align: center; }
         .stat-card .num { font-size: 32px; font-weight: bold; color: #FFC800; }
-        .stat-card .label { font-size: 13px; color: #888; margin-top: 4px; }
+        .stat-card .label { font-size: 12px; color: #888; margin-top: 4px; }
         .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .toolbar h2 { color: #FFC800; font-size: 18px; }
         .toolbar button { background: #FF5722; border: none; border-radius: 8px; padding: 8px 16px; color: white; cursor: pointer; font-size: 14px; }
         .toolbar button:hover { background: #FF6D00; }
-        .log-entry { background: #160f2e; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
-        .log-entry .meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: #888; }
-        .log-entry .user { color: #FFC800; font-weight: 600; }
-        .log-entry .question { color: #e0e0e0; margin-bottom: 8px; }
-        .log-entry .answer { color: #FF5722; padding-left: 12px; border-left: 2px solid rgba(255,87,34,0.3); }
+        .entry { background: #160f2e; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); }
+        .entry .meta { display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 12px; color: #888; flex-wrap: wrap; }
+        .entry .user { color: #FFC800; font-weight: 600; }
+        .entry .question { color: #e0e0e0; margin-bottom: 8px; }
+        .entry .answer { color: #FF5722; padding-left: 12px; border-left: 2px solid rgba(255,87,34,0.3); }
         .empty { text-align: center; padding: 40px; color: #666; }
-        .event-form { background: #160f2e; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,200,0,0.2); }
-        .event-form h3 { color: #FFC800; margin-bottom: 16px; }
+        .form { background: #160f2e; border-radius: 12px; padding: 20px; margin-bottom: 20px; border: 1px solid rgba(255,200,0,0.2); }
+        .form h3 { color: #FFC800; margin-bottom: 16px; }
         .form-row { display: flex; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
         .form-field { flex: 1; min-width: 150px; }
         .form-field label { display: block; font-size: 12px; color: #888; margin-bottom: 4px; }
-        .form-field input, .form-field select { width: 100%; background: #0c0612; border: 1px solid rgba(255,87,34,0.3); border-radius: 8px; padding: 10px 12px; color: white; font-size: 14px; outline: none; }
-        .form-field input:focus, .form-field select:focus { border-color: #FFC800; }
+        .form-field input, .form-field select, .form-field textarea { width: 100%; background: #0c0612; border: 1px solid rgba(255,87,34,0.3); border-radius: 8px; padding: 10px 12px; color: white; font-size: 14px; outline: none; font-family: inherit; }
+        .form-field input:focus, .form-field select:focus, .form-field textarea:focus { border-color: #FFC800; }
+        .form-field textarea { resize: vertical; min-height: 60px; }
         .form-btn { background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); border: none; border-radius: 8px; padding: 10px 24px; color: black; font-weight: 600; cursor: pointer; }
         .form-btn:hover { opacity: 0.9; }
-        .event-entry { background: #160f2e; border-radius: 12px; padding: 16px; margin-bottom: 12px; border: 1px solid rgba(255,255,255,0.1); display: flex; justify-content: space-between; align-items: center; }
-        .event-entry .info { flex: 1; }
-        .event-entry .date { color: #FFC800; font-weight: 600; font-size: 14px; }
-        .event-entry .title { color: white; font-weight: 600; margin: 4px 0; }
-        .event-entry .location { color: #888; font-size: 13px; }
-        .event-entry .type-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 8px; }
-        .type-public { background: rgba(255,200,0,0.2); color: #FFC800; }
-        .type-private { background: rgba(255,87,34,0.2); color: #FF5722; }
-        .delete-btn { background: rgba(255,87,34,0.2); border: 1px solid rgba(255,87,34,0.4); border-radius: 8px; padding: 8px 12px; color: #FF5722; cursor: pointer; font-size: 13px; }
-        .delete-btn:hover { background: rgba(255,87,34,0.3); }
+        .badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 11px; font-weight: 600; margin-left: 8px; }
+        .badge-public { background: rgba(255,200,0,0.2); color: #FFC800; }
+        .badge-private { background: rgba(255,87,34,0.2); color: #FF5722; }
+        .badge-pendiente { background: rgba(255,193,7,0.2); color: #ffc107; }
+        .badge-confirmada { background: rgba(37,211,102,0.2); color: #25D366; }
+        .badge-rechazada { background: rgba(255,87,34,0.2); color: #FF5722; }
+        .badge-aprobado { background: rgba(37,211,102,0.2); color: #25D366; }
+        .badge-pendiente-aprob { background: rgba(255,193,7,0.2); color: #ffc107; }
+        .btn-sm { background: rgba(255,87,34,0.2); border: 1px solid rgba(255,87,34,0.4); border-radius: 8px; padding: 6px 10px; color: #FF5722; cursor: pointer; font-size: 12px; margin-left: 6px; }
+        .btn-sm:hover { background: rgba(255,87,34,0.3); }
+        .btn-sm.green { background: rgba(37,211,102,0.2); border-color: rgba(37,211,102,0.4); color: #25D366; }
+        .btn-sm.green:hover { background: rgba(37,211,102,0.3); }
         .msg { padding: 12px; border-radius: 8px; margin-bottom: 12px; font-size: 14px; }
         .msg-ok { background: rgba(37,211,102,0.15); color: #25D366; border: 1px solid rgba(37,211,102,0.3); }
         .msg-err { background: rgba(255,87,34,0.15); color: #FF5722; border: 1px solid rgba(255,87,34,0.3); }
+        .panel { display: none; }
+        .panel.active { display: block; }
     </style>
 </head>
 <body>
@@ -75,62 +81,85 @@
 
     <div id="dashboard-screen" class="dashboard" style="display:none;">
         <div class="tabs">
-            <div class="tab active" id="tab-chats">Historial de Chat</div>
-            <div class="tab" id="tab-events">Agenda / Eventos</div>
+            <div class="tab active" data-panel="chats">Chat</div>
+            <div class="tab" data-panel="reservas">Reservas</div>
+            <div class="tab" data-panel="events">Eventos</div>
+            <div class="tab" data-panel="blog">Blog</div>
+            <div class="tab" data-panel="testimonios">Testimonios</div>
+            <div class="tab" data-panel="newsletter">Newsletter</div>
         </div>
 
-        <div id="panel-chats">
+        <!-- CHAT -->
+        <div id="panel-chats" class="panel active">
             <div class="stats">
-                <div class="stat-card">
-                    <div class="num" id="total-chats">0</div>
-                    <div class="label">Interacciones totales</div>
-                </div>
-                <div class="stat-card">
-                    <div class="num" id="unique-users">0</div>
-                    <div class="label">Usuarios únicos</div>
-                </div>
+                <div class="stat-card"><div class="num" id="total-chats">0</div><div class="label">Interacciones</div></div>
+                <div class="stat-card"><div class="num" id="unique-users">0</div><div class="label">Usuarios únicos</div></div>
             </div>
-            <div class="toolbar">
-                <h2>Historial de conversaciones</h2>
-                <button id="refresh-btn">Actualizar</button>
-            </div>
+            <div class="toolbar"><h2>Historial de conversaciones</h2><button id="refresh-btn">Actualizar</button></div>
             <div id="logs-container"></div>
         </div>
 
-        <div id="panel-events" style="display:none;">
+        <!-- RESERVAS -->
+        <div id="panel-reservas" class="panel">
+            <div class="stats">
+                <div class="stat-card"><div class="num" id="total-reservas">0</div><div class="label">Total reservas</div></div>
+                <div class="stat-card"><div class="num" id="reservas-pendientes">0</div><div class="label">Pendientes</div></div>
+            </div>
+            <div class="toolbar"><h2>Solicitudes de reserva</h2><button id="refresh-reservas-btn">Actualizar</button></div>
+            <div id="reservas-container"></div>
+        </div>
+
+        <!-- EVENTOS -->
+        <div id="panel-events" class="panel">
             <div id="event-msg"></div>
-            <div class="event-form">
+            <div class="form">
                 <h3>Agregar / Editar Evento</h3>
                 <div class="form-row">
-                    <div class="form-field">
-                        <label>Fecha</label>
-                        <input type="date" id="event-date">
-                    </div>
-                    <div class="form-field">
-                        <label>Título</label>
-                        <input type="text" id="event-title" placeholder="Ej: Show en vivo, Boda, Evento Corporativo">
-                    </div>
+                    <div class="form-field"><label>Fecha</label><input type="date" id="event-date"></div>
+                    <div class="form-field"><label>Título</label><input type="text" id="event-title" placeholder="Show en vivo, Boda..."></div>
                 </div>
                 <div class="form-row">
-                    <div class="form-field">
-                        <label>Lugar</label>
-                        <input type="text" id="event-location" placeholder="Dirección o lugar">
-                    </div>
-                    <div class="form-field">
-                        <label>Tipo</label>
-                        <select id="event-type">
-                            <option value="private">Privado</option>
-                            <option value="public">Público</option>
-                        </select>
-                    </div>
+                    <div class="form-field"><label>Lugar</label><input type="text" id="event-location" placeholder="Dirección o lugar"></div>
+                    <div class="form-field"><label>Tipo</label><select id="event-type"><option value="private">Privado</option><option value="public">Público</option></select></div>
                 </div>
                 <button class="form-btn" id="add-event-btn">Guardar Evento</button>
             </div>
-            <div class="toolbar">
-                <h2>Eventos agendados</h2>
-                <button id="refresh-events-btn">Actualizar</button>
-            </div>
+            <div class="toolbar"><h2>Eventos agendados</h2><button id="refresh-events-btn">Actualizar</button></div>
             <div id="events-container"></div>
+        </div>
+
+        <!-- BLOG -->
+        <div id="panel-blog" class="panel">
+            <div id="blog-msg"></div>
+            <div class="form">
+                <h3>Nueva publicación</h3>
+                <div class="form-row"><div class="form-field"><label>Título</label><input type="text" id="blog-titulo" placeholder="Título de la noticia"></div></div>
+                <div class="form-row"><div class="form-field"><label>Resumen</label><input type="text" id="blog-resumen" placeholder="Resumen corto"></div></div>
+                <div class="form-row"><div class="form-field"><label>URL de imagen</label><input type="text" id="blog-imagen" placeholder="https://..."></div></div>
+                <div class="form-row"><div class="form-field"><label>Contenido</label><textarea id="blog-contenido" rows="4" placeholder="Contenido completo..."></textarea></div></div>
+                <button class="form-btn" id="add-blog-btn">Publicar</button>
+            </div>
+            <div class="toolbar"><h2>Publicaciones</h2><button id="refresh-blog-btn">Actualizar</button></div>
+            <div id="blog-container"></div>
+        </div>
+
+        <!-- TESTIMONIOS -->
+        <div id="panel-testimonios" class="panel">
+            <div class="stats">
+                <div class="stat-card"><div class="num" id="total-testimonios">0</div><div class="label">Total</div></div>
+                <div class="stat-card"><div class="num" id="testimonios-pendientes">0</div><div class="label">Pendientes</div></div>
+            </div>
+            <div class="toolbar"><h2>Testimonios</h2><button id="refresh-testimonios-btn">Actualizar</button></div>
+            <div id="testimonios-container"></div>
+        </div>
+
+        <!-- NEWSLETTER -->
+        <div id="panel-newsletter" class="panel">
+            <div class="stats">
+                <div class="stat-card"><div class="num" id="total-suscriptores">0</div><div class="label">Suscriptores</div></div>
+            </div>
+            <div class="toolbar"><h2>Lista de suscriptores</h2><button id="refresh-newsletter-btn">Actualizar</button></div>
+            <div id="newsletter-container"></div>
         </div>
     </div>
 
@@ -148,157 +177,35 @@
             if (e.key === 'Enter') document.getElementById('login-btn').click();
         });
 
+        // Tabs
+        document.querySelectorAll('.tab').forEach(function(tab) {
+            tab.addEventListener('click', function() {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+                this.classList.add('active');
+                var panel = document.getElementById('panel-' + this.dataset.panel);
+                panel.classList.add('active');
+                var fn = this.dataset.panel;
+                if (fn === 'chats') loadLogs();
+                else if (fn === 'reservas') loadReservas();
+                else if (fn === 'events') loadEvents();
+                else if (fn === 'blog') loadBlog();
+                else if (fn === 'testimonios') loadTestimonios();
+                else if (fn === 'newsletter') loadNewsletter();
+            });
+        });
+
         document.getElementById('refresh-btn').addEventListener('click', loadLogs);
+        document.getElementById('refresh-reservas-btn').addEventListener('click', loadReservas);
         document.getElementById('refresh-events-btn').addEventListener('click', loadEvents);
+        document.getElementById('refresh-blog-btn').addEventListener('click', loadBlog);
+        document.getElementById('refresh-testimonios-btn').addEventListener('click', loadTestimonios);
+        document.getElementById('refresh-newsletter-btn').addEventListener('click', loadNewsletter);
 
-        document.getElementById('tab-chats').addEventListener('click', function() {
-            document.getElementById('tab-chats').classList.add('active');
-            document.getElementById('tab-events').classList.remove('active');
-            document.getElementById('panel-chats').style.display = 'block';
-            document.getElementById('panel-events').style.display = 'none';
-        });
-        document.getElementById('tab-events').addEventListener('click', function() {
-            document.getElementById('tab-events').classList.add('active');
-            document.getElementById('tab-chats').classList.remove('active');
-            document.getElementById('panel-events').style.display = 'block';
-            document.getElementById('panel-chats').style.display = 'none';
-            loadEvents();
-        });
-
-        async function loadLogs() {
-            try {
-                var res = await fetch('/api/logs?password=' + encodeURIComponent(adminPassword));
-                var data = await res.json();
-
-                if (res.status === 401) {
-                    document.getElementById('login-error').textContent = 'Contraseña incorrecta';
-                    return;
-                }
-                if (!res.ok) {
-                    document.getElementById('login-error').textContent = data.error || 'Error';
-                    return;
-                }
-
-                document.getElementById('login-screen').style.display = 'none';
-                document.getElementById('dashboard-screen').style.display = 'block';
-
-                document.getElementById('total-chats').textContent = data.count;
-
-                var users = {};
-                (data.logs || []).forEach(function(l) { users[l.user] = true; });
-                document.getElementById('unique-users').textContent = Object.keys(users).length;
-
-                var container = document.getElementById('logs-container');
-                container.innerHTML = '';
-
-                if (!data.logs || data.logs.length === 0) {
-                    container.innerHTML = '<div class="empty">No hay conversaciones registradas todavía.</div>';
-                    return;
-                }
-
-                (data.logs || []).forEach(function(log) {
-                    var div = document.createElement('div');
-                    div.className = 'log-entry';
-                    var date = new Date(log.timestamp).toLocaleString('es-CL');
-                    div.innerHTML =
-                        '<div class="meta"><span class="user">' + escapeHtml(log.user) + '</span><span>' + date + '</span></div>' +
-                        '<div class="question"><strong>Pregunta:</strong> ' + escapeHtml(log.message) + '</div>' +
-                        '<div class="answer"><strong>Respuesta:</strong> ' + escapeHtml(log.reply) + '</div>';
-                    container.appendChild(div);
-                });
-            } catch (err) {
-                document.getElementById('login-error').textContent = 'Error de conexión';
-                console.error(err);
-            }
-        }
-
-        async function loadEvents() {
-            try {
-                var res = await fetch('/api/events');
-                var data = await res.json();
-                var container = document.getElementById('events-container');
-                container.innerHTML = '';
-
-                if (!data.events || Object.keys(data.events).length === 0) {
-                    container.innerHTML = '<div class="empty">No hay eventos agendados.</div>';
-                    return;
-                }
-
-                var keys = Object.keys(data.events).sort();
-                keys.forEach(function(key) {
-                    var ev = data.events[key];
-                    var div = document.createElement('div');
-                    div.className = 'event-entry';
-                    var typeLabel = ev.type === 'public' ? 'Público' : 'Privado';
-                    var typeClass = ev.type === 'public' ? 'type-public' : 'type-private';
-                    div.innerHTML =
-                        '<div class="info">' +
-                            '<div class="date">' + formatDate(key) + '</div>' +
-                            '<div class="title">' + escapeHtml(ev.title) + '<span class="type-badge ' + typeClass + '">' + typeLabel + '</span></div>' +
-                            '<div class="location">' + escapeHtml(ev.location || '') + '</div>' +
-                        '</div>' +
-                        '<button class="delete-btn" data-id="' + ev.id + '">Eliminar</button>';
-                    container.appendChild(div);
-                });
-
-                container.querySelectorAll('.delete-btn').forEach(function(btn) {
-                    btn.addEventListener('click', async function() {
-                        if (!confirm('¿Eliminar este evento?')) return;
-                        var id = this.dataset.id;
-                        try {
-                            var res = await fetch('/api/events?id=' + id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
-                            if (res.ok) {
-                                showEventMsg('Evento eliminado', 'ok');
-                                loadEvents();
-                            } else {
-                                showEventMsg('Error al eliminar', 'err');
-                            }
-                        } catch (err) {
-                            showEventMsg('Error de conexión', 'err');
-                        }
-                    });
-                });
-            } catch (err) {
-                console.error(err);
-            }
-        }
-
-        document.getElementById('add-event-btn').addEventListener('click', async function() {
-            var date = document.getElementById('event-date').value;
-            var title = document.getElementById('event-title').value.trim();
-            var location = document.getElementById('event-location').value.trim();
-            var type = document.getElementById('event-type').value;
-
-            if (!date || !title) {
-                showEventMsg('Fecha y título son obligatorios', 'err');
-                return;
-            }
-
-            try {
-                var res = await fetch('/api/events?password=' + encodeURIComponent(adminPassword), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ date: date, title: title, location: location, type: type })
-                });
-                var data = await res.json();
-                if (res.ok) {
-                    showEventMsg('Evento guardado correctamente', 'ok');
-                    document.getElementById('event-title').value = '';
-                    document.getElementById('event-location').value = '';
-                    loadEvents();
-                } else {
-                    showEventMsg(data.error || 'Error al guardar', 'err');
-                }
-            } catch (err) {
-                showEventMsg('Error de conexión', 'err');
-            }
-        });
-
-        function showEventMsg(text, type) {
-            var el = document.getElementById('event-msg');
-            el.className = 'msg msg-' + type;
-            el.textContent = text;
-            setTimeout(function() { el.className = ''; el.textContent = ''; }, 3000);
+        function escapeHtml(text) {
+            var div = document.createElement('div');
+            div.textContent = text || '';
+            return div.innerHTML;
         }
 
         function formatDate(key) {
@@ -307,10 +214,214 @@
             return parts[2] + ' de ' + months[parseInt(parts[1]) - 1] + ' ' + parts[0];
         }
 
-        function escapeHtml(text) {
-            var div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        // === CHAT LOGS ===
+        async function loadLogs() {
+            try {
+                var res = await fetch('/api/logs?password=' + encodeURIComponent(adminPassword));
+                var data = await res.json();
+                if (res.status === 401) { document.getElementById('login-error').textContent = 'Contraseña incorrecta'; return; }
+                if (!res.ok) { document.getElementById('login-error').textContent = data.error || 'Error'; return; }
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('dashboard-screen').style.display = 'block';
+                document.getElementById('total-chats').textContent = data.count;
+                var users = {};
+                (data.logs || []).forEach(function(l) { users[l.user] = true; });
+                document.getElementById('unique-users').textContent = Object.keys(users).length;
+                var container = document.getElementById('logs-container');
+                container.innerHTML = '';
+                if (!data.logs || data.logs.length === 0) { container.innerHTML = '<div class="empty">No hay conversaciones registradas.</div>'; return; }
+                (data.logs || []).forEach(function(log) {
+                    var div = document.createElement('div');
+                    div.className = 'entry';
+                    var date = new Date(log.timestamp).toLocaleString('es-CL');
+                    div.innerHTML = '<div class="meta"><span class="user">' + escapeHtml(log.user) + '</span><span>' + date + '</span></div><div class="question"><strong>P:</strong> ' + escapeHtml(log.message) + '</div><div class="answer"><strong>R:</strong> ' + escapeHtml(log.reply) + '</div>';
+                    container.appendChild(div);
+                });
+            } catch (err) { document.getElementById('login-error').textContent = 'Error de conexión'; }
+        }
+
+        // === RESERVAS ===
+        async function loadReservas() {
+            try {
+                var res = await fetch('/api/reservas?password=' + encodeURIComponent(adminPassword));
+                var data = await res.json();
+                if (!res.ok) return;
+                document.getElementById('total-reservas').textContent = data.count;
+                var pendientes = (data.reservas || []).filter(function(r) { return r.estado === 'pendiente'; }).length;
+                document.getElementById('reservas-pendientes').textContent = pendientes;
+                var container = document.getElementById('reservas-container');
+                container.innerHTML = '';
+                if (!data.reservas || data.reservas.length === 0) { container.innerHTML = '<div class="empty">No hay solicitudes de reserva.</div>'; return; }
+                data.reservas.forEach(function(r) {
+                    var div = document.createElement('div');
+                    div.className = 'entry';
+                    var date = new Date(r.created_at).toLocaleString('es-CL');
+                    var fechaEv = r.fecha_evento ? new Date(r.fecha_evento).toLocaleDateString('es-CL') : 'Sin fecha';
+                    div.innerHTML =
+                        '<div class="meta"><span class="user">' + escapeHtml(r.nombre) + '</span><span>' + date + '</span></div>' +
+                        '<div><strong>Evento:</strong> ' + escapeHtml(r.tipo_evento) + ' · <strong>Fecha:</strong> ' + fechaEv + ' · <strong>Lugar:</strong> ' + escapeHtml(r.lugar) + '</div>' +
+                        '<div><strong>Email:</strong> ' + escapeHtml(r.email) + ' · <strong>Tel:</strong> ' + escapeHtml(r.telefono) + '</div>' +
+                        '<div class="question"><strong>Mensaje:</strong> ' + escapeHtml(r.mensaje) + '</div>' +
+                        '<div><span class="badge badge-' + r.estado + '">' + r.estado + '</span>' +
+                        '<button class="btn-sm green" data-id="' + r.id + '" data-estado="confirmada">Confirmar</button>' +
+                        '<button class="btn-sm" data-id="' + r.id + '" data-estado="rechazada">Rechazar</button>' +
+                        '<button class="btn-sm" data-id="' + r.id + '" data-action="delete">Eliminar</button></div>';
+                    container.appendChild(div);
+                });
+                container.querySelectorAll('.btn-sm').forEach(function(btn) {
+                    btn.addEventListener('click', async function() {
+                        var id = this.dataset.id;
+                        if (this.dataset.action === 'delete') {
+                            await fetch('/api/reservas?id=' + id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
+                        } else {
+                            await fetch('/api/reservas?id=' + id + '&estado=' + this.dataset.estado + '&password=' + encodeURIComponent(adminPassword), { method: 'PATCH' });
+                        }
+                        loadReservas();
+                    });
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        // === EVENTS ===
+        async function loadEvents() {
+            try {
+                var res = await fetch('/api/events');
+                var data = await res.json();
+                var container = document.getElementById('events-container');
+                container.innerHTML = '';
+                if (!data.events || Object.keys(data.events).length === 0) { container.innerHTML = '<div class="empty">No hay eventos agendados.</div>'; return; }
+                Object.keys(data.events).sort().forEach(function(key) {
+                    var ev = data.events[key];
+                    var div = document.createElement('div');
+                    div.className = 'entry';
+                    var typeLabel = ev.type === 'public' ? 'Público' : 'Privado';
+                    var typeClass = ev.type === 'public' ? 'badge-public' : 'badge-private';
+                    div.innerHTML = '<div class="info"><div class="meta"><span class="user">' + formatDate(key) + '</span></div><div class="question">' + escapeHtml(ev.title) + '<span class="badge ' + typeClass + '">' + typeLabel + '</span></div><div>' + escapeHtml(ev.location) + '</div></div><button class="btn-sm" data-id="' + ev.id + '">Eliminar</button>';
+                    container.appendChild(div);
+                });
+                container.querySelectorAll('.btn-sm').forEach(function(btn) {
+                    btn.addEventListener('click', async function() {
+                        if (!confirm('¿Eliminar evento?')) return;
+                        await fetch('/api/events?id=' + this.dataset.id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
+                        loadEvents();
+                    });
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        document.getElementById('add-event-btn').addEventListener('click', async function() {
+            var date = document.getElementById('event-date').value;
+            var title = document.getElementById('event-title').value.trim();
+            var location = document.getElementById('event-location').value.trim();
+            var type = document.getElementById('event-type').value;
+            if (!date || !title) { showMsg('event-msg', 'Fecha y título son obligatorios', 'err'); return; }
+            var res = await fetch('/api/events?password=' + encodeURIComponent(adminPassword), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ date: date, title: title, location: location, type: type }) });
+            if (res.ok) { showMsg('event-msg', 'Evento guardado', 'ok'); document.getElementById('event-title').value = ''; document.getElementById('event-location').value = ''; loadEvents(); }
+        });
+
+        // === BLOG ===
+        async function loadBlog() {
+            try {
+                var res = await fetch('/api/blog?password=' + encodeURIComponent(adminPassword));
+                var data = await res.json();
+                var container = document.getElementById('blog-container');
+                container.innerHTML = '';
+                if (!data.posts || data.posts.length === 0) { container.innerHTML = '<div class="empty">No hay publicaciones.</div>'; return; }
+                data.posts.forEach(function(post) {
+                    var div = document.createElement('div');
+                    div.className = 'entry';
+                    var date = new Date(post.created_at).toLocaleString('es-CL');
+                    var badge = post.publicado ? '<span class="badge badge-aprobado">Publicado</span>' : '<span class="badge badge-pendiente-aprob">Borrador</span>';
+                    div.innerHTML = '<div class="meta"><span class="user">' + escapeHtml(post.titulo) + '</span><span>' + date + ' ' + badge + '</span></div><div class="question">' + escapeHtml(post.resumen) + '</div><button class="btn-sm" data-id="' + post.id + '">Eliminar</button>';
+                    container.appendChild(div);
+                });
+                container.querySelectorAll('.btn-sm').forEach(function(btn) {
+                    btn.addEventListener('click', async function() {
+                        if (!confirm('¿Eliminar publicación?')) return;
+                        await fetch('/api/blog?id=' + this.dataset.id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
+                        loadBlog();
+                    });
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        document.getElementById('add-blog-btn').addEventListener('click', async function() {
+            var titulo = document.getElementById('blog-titulo').value.trim();
+            var resumen = document.getElementById('blog-resumen').value.trim();
+            var contenido = document.getElementById('blog-contenido').value.trim();
+            var imagen = document.getElementById('blog-imagen').value.trim();
+            if (!titulo) { showMsg('blog-msg', 'Título es obligatorio', 'err'); return; }
+            var res = await fetch('/api/blog?password=' + encodeURIComponent(adminPassword), { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ titulo: titulo, resumen: resumen, contenido: contenido, imagen_url: imagen, publicado: true }) });
+            if (res.ok) { showMsg('blog-msg', 'Publicación creada', 'ok'); document.getElementById('blog-titulo').value = ''; document.getElementById('blog-resumen').value = ''; document.getElementById('blog-contenido').value = ''; document.getElementById('blog-imagen').value = ''; loadBlog(); }
+        });
+
+        // === TESTIMONIOS ===
+        async function loadTestimonios() {
+            try {
+                var res = await fetch('/api/testimonios?password=' + encodeURIComponent(adminPassword));
+                var data = await res.json();
+                if (!res.ok) return;
+                document.getElementById('total-testimonios').textContent = data.count;
+                var pendientes = (data.testimonios || []).filter(function(t) { return !t.aprobado; }).length;
+                document.getElementById('testimonios-pendientes').textContent = pendientes;
+                var container = document.getElementById('testimonios-container');
+                container.innerHTML = '';
+                if (!data.testimonios || data.testimonios.length === 0) { container.innerHTML = '<div class="empty">No hay testimonios.</div>'; return; }
+                data.testimonios.forEach(function(t) {
+                    var div = document.createElement('div');
+                    div.className = 'entry';
+                    var date = new Date(t.created_at).toLocaleString('es-CL');
+                    var stars = '⭐'.repeat(t.calificacion || 5);
+                    var badge = t.aprobado ? '<span class="badge badge-aprobado">Aprobado</span>' : '<span class="badge badge-pendiente-aprob">Pendiente</span>';
+                    div.innerHTML = '<div class="meta"><span class="user">' + escapeHtml(t.nombre) + '</span><span>' + date + ' ' + badge + '</span></div><div>' + stars + ' · ' + escapeHtml(t.evento) + '</div><div class="question">' + escapeHtml(t.mensaje) + '</div><button class="btn-sm green" data-id="' + t.id + '" data-action="approve">' + (t.aprobado ? 'Desaprobar' : 'Aprobar') + '</button><button class="btn-sm" data-id="' + t.id + '" data-action="delete">Eliminar</button>';
+                    container.appendChild(div);
+                });
+                container.querySelectorAll('.btn-sm').forEach(function(btn) {
+                    btn.addEventListener('click', async function() {
+                        var id = this.dataset.id;
+                        if (this.dataset.action === 'delete') {
+                            await fetch('/api/testimonios?id=' + id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
+                        } else {
+                            var current = this.textContent === 'Aprobar';
+                            await fetch('/api/testimonios?id=' + id + '&aprobado=' + !current + '&password=' + encodeURIComponent(adminPassword), { method: 'PATCH' });
+                        }
+                        loadTestimonios();
+                    });
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        // === NEWSLETTER ===
+        async function loadNewsletter() {
+            try {
+                var res = await fetch('/api/newsletter?password=' + encodeURIComponent(adminPassword));
+                var data = await res.json();
+                if (!res.ok) return;
+                document.getElementById('total-suscriptores').textContent = data.count;
+                var container = document.getElementById('newsletter-container');
+                container.innerHTML = '';
+                if (!data.suscriptores || data.suscriptores.length === 0) { container.innerHTML = '<div class="empty">No hay suscriptores.</div>'; return; }
+                data.suscriptores.forEach(function(s) {
+                    var div = document.createElement('div');
+                    div.className = 'entry';
+                    var date = new Date(s.created_at).toLocaleString('es-CL');
+                    div.innerHTML = '<div class="meta"><span class="user">' + escapeHtml(s.email) + '</span><span>' + date + '</span></div><button class="btn-sm" data-id="' + s.id + '">Eliminar</button>';
+                    container.appendChild(div);
+                });
+                container.querySelectorAll('.btn-sm').forEach(function(btn) {
+                    btn.addEventListener('click', async function() {
+                        await fetch('/api/newsletter?id=' + this.dataset.id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
+                        loadNewsletter();
+                    });
+                });
+            } catch (err) { console.error(err); }
+        }
+
+        function showMsg(elId, text, type) {
+            var el = document.getElementById(elId);
+            el.className = 'msg msg-' + type;
+            el.textContent = text;
+            setTimeout(function() { el.className = ''; el.textContent = ''; }, 3000);
         }
     </script>
 </body>

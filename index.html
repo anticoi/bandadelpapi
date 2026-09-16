@@ -334,6 +334,8 @@
                     <a href="#galeria" class="nav-link text-gray-300 hover:text-gold transition-colors">Galería</a>
                     <a href="#musica" class="nav-link text-gray-300 hover:text-gold transition-colors">Música</a>
                     <a href="#calendario" class="nav-link text-gray-300 hover:text-gold transition-colors">Calendario</a>
+                    <a href="#integrantes" class="nav-link text-gray-300 hover:text-gold transition-colors">La Banda</a>
+                    <a href="#blog" class="nav-link text-gray-300 hover:text-gold transition-colors">Noticias</a>
                     <a href="#servicios" class="nav-link text-gray-300 hover:text-gold transition-colors">Servicios</a>
                     <a href="#repertorio" class="nav-link text-gray-300 hover:text-gold transition-colors">Repertorio</a>
                     <a href="#contacto" class="nav-link text-gray-300 hover:text-gold transition-colors">Contacto</a>
@@ -354,6 +356,8 @@
                 <a href="#galeria" class="block py-2 text-gray-300 hover:text-gold">Galería</a>
                 <a href="#musica" class="block py-2 text-gray-300 hover:text-gold">Música</a>
                 <a href="#calendario" class="block py-2 text-gray-300 hover:text-gold">Calendario</a>
+                <a href="#integrantes" class="block py-2 text-gray-300 hover:text-gold">La Banda</a>
+                <a href="#blog" class="block py-2 text-gray-300 hover:text-gold">Noticias</a>
                 <a href="#servicios" class="block py-2 text-gray-300 hover:text-gold">Servicios</a>
                 <a href="#repertorio" class="block py-2 text-gray-300 hover:text-gold">Repertorio</a>
                 <a href="#contacto" class="block py-2 text-gray-300 hover:text-gold">Contacto</a>
@@ -806,6 +810,103 @@
         </div>
     </section>
 
+    <!-- Integrantes Section -->
+    <section id="integrantes" class="py-20 bg-[#0c0612] relative z-10">
+        <div class="section-divider mb-20"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-title text-4xl md:text-5xl text-gold mb-4">La Banda</h2>
+                <p class="text-gray-400 text-lg">Diez músicos profesionales, una sola fiesta tropical</p>
+            </div>
+            <div id="integrantes-container"></div>
+        </div>
+    </section>
+
+    <!-- Stats Animadas Section -->
+    <section id="stats" class="py-16 bg-[#1a0b2e] relative z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div id="stats-animadas"></div>
+        </div>
+    </section>
+
+    <!-- Blog Section -->
+    <section id="blog" class="py-20 bg-[#0c0612] relative z-10">
+        <div class="section-divider mb-20"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-title text-4xl md:text-5xl text-gold mb-4">Noticias</h2>
+                <p class="text-gray-400 text-lg">Últimas novedades de La Banda del Papi</p>
+            </div>
+            <div id="blog-container"></div>
+        </div>
+    </section>
+
+    <!-- Testimonios Section -->
+    <section id="testimonios" class="py-20 bg-[#1a0b2e] relative z-10">
+        <div class="section-divider mb-20"></div>
+        <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-title text-4xl md:text-5xl text-gold mb-4">Testimonios</h2>
+                <p class="text-gray-400 text-lg">Lo que dicen quienes ya vivieron la fiesta cumbiera</p>
+            </div>
+            <div id="testimonios-container" class="mb-12"></div>
+            <div class="bg-[#160f2e] rounded-2xl p-8 border border-amber-400/20">
+                <h3 class="text-gold font-bold mb-4 text-center">Deja tu testimonio</h3>
+                <form id="form-testimonio" class="space-y-4">
+                    <div class="grid md:grid-cols-2 gap-4">
+                        <input id="test-nombre" type="text" placeholder="Tu nombre" class="w-full bg-[#0c0612] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400" required>
+                        <input id="test-evento" type="text" placeholder="Tipo de evento (opcional)" class="w-full bg-[#0c0612] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400">
+                    </div>
+                    <select id="test-calificacion" class="w-full bg-[#0c0612] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400">
+                        <option value="5">⭐⭐⭐⭐⭐ Excelente</option>
+                        <option value="4">⭐⭐⭐⭐ Muy bueno</option>
+                        <option value="3">⭐⭐⭐ Bueno</option>
+                    </select>
+                    <textarea id="test-mensaje" rows="3" placeholder="Tu mensaje" class="w-full bg-[#0c0612] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400" required></textarea>
+                    <button type="submit" class="btn-primary px-8 py-3 rounded-full font-bold">Enviar testimonio</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Mapa de Eventos Section -->
+    <section id="mapa" class="py-20 bg-[#0c0612] relative z-10">
+        <div class="section-divider mb-20"></div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16">
+                <h2 class="font-title text-4xl md:text-5xl text-gold mb-4">Dónde Encontrarnos</h2>
+                <p class="text-gray-400 text-lg">Ubicación de nuestros eventos</p>
+            </div>
+            <div id="mapa-container"></div>
+        </div>
+    </section>
+
+    <!-- TikTok Section -->
+    <section id="tiktok" class="py-20 bg-[#1a0b2e] relative z-10">
+        <div class="section-divider mb-20"></div>
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <div class="text-center mb-16">
+                <h2 class="font-title text-4xl md:text-5xl text-gold mb-4">Síguenos en TikTok</h2>
+                <p class="text-gray-400 text-lg">@la.banda.del.papi · +11.000 seguidores</p>
+            </div>
+            <div id="tiktok-container" class="flex justify-center"></div>
+            <a href="https://www.tiktok.com/@la.banda.del.papi" target="_blank" class="inline-block mt-6 btn-primary px-8 py-3 rounded-full font-bold">Ver más en TikTok</a>
+        </div>
+    </section>
+
+    <!-- Newsletter Section -->
+    <section id="newsletter" class="py-16 bg-[#0c0612] relative z-10">
+        <div class="max-w-2xl mx-auto px-4 text-center">
+            <h2 class="font-title text-3xl md:text-4xl text-gold mb-4">No te pierdas ningún evento</h2>
+            <p class="text-gray-400 mb-8">Suscríbete y recibe novedades de próximos shows y nuevos temas</p>
+            <form id="form-newsletter" class="flex flex-col sm:flex-row gap-4 justify-center">
+                <input id="newsletter-email" type="email" placeholder="tu@email.com" class="flex-1 bg-[#160f2e] border border-amber-400/30 rounded-full px-6 py-3 text-white outline-none focus:border-amber-400" required>
+                <button type="submit" class="btn-primary px-8 py-3 rounded-full font-bold">Suscribirme</button>
+            </form>
+            <div id="newsletter-msg"></div>
+        </div>
+    </section>
+
     <!-- Contacto Section -->
     <section id="contacto" class="py-20 bg-[#1a0b2e] relative z-10">
         <div class="section-divider mb-20"></div>
@@ -816,6 +917,34 @@
             </div>
 
             <div class="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
+                <!-- Formulario de reserva -->
+                <div class="bg-[#0c0612] rounded-2xl p-8 border border-amber-400/30">
+                    <h3 class="text-2xl font-bold text-gold mb-6">Solicitar reserva</h3>
+                    <form id="form-reserva" class="space-y-4">
+                        <input id="res-nombre" type="text" placeholder="Tu nombre" class="w-full bg-[#160f2e] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400" required>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input id="res-email" type="email" placeholder="Email" class="w-full bg-[#160f2e] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400">
+                            <input id="res-telefono" type="tel" placeholder="Teléfono" class="w-full bg-[#160f2e] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400">
+                        </div>
+                        <div class="grid grid-cols-2 gap-4">
+                            <input id="res-fecha" type="date" class="w-full bg-[#160f2e] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400">
+                            <select id="res-tipo" class="w-full bg-[#160f2e] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400">
+                                <option value="">Tipo de evento</option>
+                                <option value="Boda">Boda</option>
+                                <option value="Evento corporativo">Evento corporativo</option>
+                                <option value="Cumpleaños">Cumpleaños</option>
+                                <option value="Pub/Bar">Pub/Bar</option>
+                                <option value="Festival">Festival</option>
+                                <option value="Otro">Otro</option>
+                            </select>
+                        </div>
+                        <input id="res-lugar" type="text" placeholder="Lugar del evento" class="w-full bg-[#160f2e] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400">
+                        <textarea id="res-mensaje" rows="3" placeholder="Cuéntanos sobre tu evento" class="w-full bg-[#160f2e] border border-amber-400/30 rounded-lg px-4 py-3 text-white outline-none focus:border-amber-400" required></textarea>
+                        <button type="submit" class="btn-primary w-full px-6 py-3 rounded-full font-bold">Enviar solicitud</button>
+                        <div id="reserva-msg"></div>
+                    </form>
+                </div>
+
                 <!-- Contratación directa -->
                 <div class="space-y-6">
                     <a href="https://wa.me/56994775389?text=Hola%20La%20Banda%20del%20Papi,%20quiero%20cotizar%20un%20evento" target="_blank" rel="noopener noreferrer"
@@ -953,6 +1082,7 @@
     <script src="js/videos.js"></script>
     <script src="js/gallery.js"></script>
     <script src="js/calendar.js"></script>
+    <script src="js/extras.js"></script>
     <script src="js/main.js"></script>
     <script src="js/chatbot.js"></script>
     <script>

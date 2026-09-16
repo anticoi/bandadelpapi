@@ -3,7 +3,11 @@
   "functions": {
     "api/chat.js": { "maxDuration": 60 },
     "api/logs.js": { "maxDuration": 10 },
-    "api/events.js": { "maxDuration": 10 }
+    "api/events.js": { "maxDuration": 10 },
+    "api/reservas.js": { "maxDuration": 10 },
+    "api/blog.js": { "maxDuration": 10 },
+    "api/testimonios.js": { "maxDuration": 10 },
+    "api/newsletter.js": { "maxDuration": 10 }
   },
   "headers": [
     {
