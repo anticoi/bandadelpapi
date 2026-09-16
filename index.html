@@ -218,6 +218,34 @@
 
         .gradient-hero {
             background: linear-gradient(135deg, #0c0612 0%, #1a0b2e 50%, #2d1b4e 100%);
+            position: relative;
+        }
+
+        /* Slideshow de fotos de fondo en el hero */
+        .hero-slideshow {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+            z-index: 0;
+        }
+        .hero-slide {
+            position: absolute;
+            inset: 0;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 2.5s ease-in-out;
+            filter: brightness(0.35) saturate(1.2);
+        }
+        .hero-slide.active {
+            opacity: 1;
+        }
+        .hero-slideshow::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(180deg, rgba(12,6,18,0.6) 0%, rgba(12,6,18,0.75) 50%, rgba(12,6,18,0.9) 100%);
+            z-index: 1;
         }
 
         .gradient-warm {
@@ -335,7 +363,15 @@
 
     <!-- Hero Section -->
     <section id="inicio" class="gradient-hero min-h-screen flex items-center justify-center relative overflow-hidden pt-16">
-        <div class="absolute inset-0 opacity-10">
+        <!-- Slideshow de fotos de fondo -->
+        <div class="hero-slideshow">
+            <div class="hero-slide active" style="background-image: url('fotos/WhatsApp%20Image%202026-09-15%20at%2017.58.13.jpeg');"></div>
+            <div class="hero-slide" style="background-image: url('fotos/WhatsApp%20Image%202026-09-15%20at%2017.58.13%20(1).jpeg');"></div>
+            <div class="hero-slide" style="background-image: url('fotos/WhatsApp%20Image%202026-09-15%20at%2017.59.37.jpeg');"></div>
+            <div class="hero-slide" style="background-image: url('fotos/WhatsApp%20Image%202026-09-15%20at%2017.59.38.jpeg');"></div>
+        </div>
+
+        <div class="absolute inset-0 opacity-10 z-[2]">
             <div class="absolute top-20 left-10 w-72 h-72 bg-amber-500 rounded-full filter blur-3xl animate-pulse-slow"></div>
             <div class="absolute bottom-20 right-10 w-96 h-96 bg-orange-500 rounded-full filter blur-3xl animate-pulse-slow" style="animation-delay: 1s;"></div>
             <div class="absolute top-1/2 left-1/2 w-80 h-80 bg-green-500 rounded-full filter blur-3xl animate-pulse-slow" style="animation-delay: 2s;"></div>
@@ -919,5 +955,18 @@
     <script src="js/calendar.js"></script>
     <script src="js/main.js"></script>
     <script src="js/chatbot.js"></script>
+    <script>
+        // Slideshow de fotos en el hero
+        (function() {
+            var slides = document.querySelectorAll('.hero-slide');
+            if (slides.length <= 1) return;
+            var current = 0;
+            setInterval(function() {
+                slides[current].classList.remove('active');
+                current = (current + 1) % slides.length;
+                slides[current].classList.add('active');
+            }, 5000);
+        })();
+    </script>
 </body>
 </html>
