@@ -259,11 +259,15 @@ document.addEventListener('DOMContentLoaded', () => {
     (function initTikTok() {
         var container = document.getElementById('tiktok-container');
         if (!container) return;
-        container.innerHTML = '<blockquote class="tiktok-embed" cite="https://www.tiktok.com/@la.banda.del.papi" data-embed-type="creator" style="max-width:780px;min-width:288px;"><section><a target="_blank" href="https://www.tiktok.com/@la.banda.del.papi?refer=creator_embed">@la.banda.del.papi</a></section></blockquote>';
-        var script = document.createElement('script');
-        script.src = 'https://www.tiktok.com/embed.js';
-        script.async = true;
-        document.body.appendChild(script);
+        container.innerHTML =
+            '<div style="max-width:340px;margin:0 auto;">' +
+                '<div style="position:relative;padding-bottom:155%;height:0;overflow:hidden;border-radius:16px;border:1px solid rgba(255,200,0,0.2);">' +
+                    '<iframe src="https://www.tiktok.com/embed/v2/@la.banda.del.papi" ' +
+                        'style="position:absolute;top:0;left:0;width:100%;height:100%;border:0;" ' +
+                        'allowfullscreen scrolling="no" allow="encrypted-media">' +
+                    '</iframe>' +
+                '</div>' +
+            '</div>';
     })();
 
     // === #10 MODO KIOSK ===
