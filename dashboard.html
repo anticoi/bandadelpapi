@@ -64,6 +64,23 @@
         .msg-err { background: rgba(255,87,34,0.15); color: #FF5722; border: 1px solid rgba(255,87,34,0.3); }
         .panel { display: none; }
         .panel.active { display: block; }
+        .photo-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; }
+        .photo-card { background: #160f2e; border-radius: 12px; overflow: hidden; border: 1px solid rgba(255,200,0,0.2); cursor: grab; transition: all 0.2s; position: relative; }
+        .photo-card.dragging { opacity: 0.5; cursor: grabbing; }
+        .photo-card.drag-over { border-color: #FFC800; transform: scale(1.03); }
+        .photo-card img { width: 100%; height: 120px; object-fit: cover; display: block; }
+        .photo-card .photo-info { padding: 8px; }
+        .photo-card .photo-info .ptitle { font-size: 12px; color: #FFC800; font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .photo-card .photo-info .porden { font-size: 10px; color: #888; }
+        .photo-card .photo-del { position: absolute; top: 4px; right: 4px; background: rgba(255,87,34,0.9); border: none; border-radius: 50%; width: 22px; height: 22px; color: white; cursor: pointer; font-size: 12px; display: flex; align-items: center; justify-content: center; }
+        .photo-card .photo-del:hover { background: rgba(255,87,34,1); }
+        .reorder-bar { display: flex; gap: 12px; align-items: center; margin-bottom: 16px; padding: 12px; background: #160f2e; border-radius: 12px; border: 1px solid rgba(255,200,0,0.2); }
+        .reorder-bar.unsaved { border-color: #FFC800; box-shadow: 0 0 10px rgba(255,200,0,0.3); }
+        .reorder-bar .hint { color: #888; font-size: 13px; flex: 1; }
+        .reorder-bar button { background: #FF5722; border: none; border-radius: 8px; padding: 8px 16px; color: white; cursor: pointer; font-size: 13px; }
+        .reorder-bar button:hover { background: #FF6D00; }
+        .reorder-bar button:disabled { opacity: 0.4; cursor: not-allowed; }
+        .reorder-bar .save-btn { background: linear-gradient(135deg, #FFC800 0%, #FF5722 100%); color: black; font-weight: 600; }
     </style>
 </head>
 <body>
@@ -196,6 +213,11 @@
                 <button class="form-btn" id="add-photo-btn">Agregar foto</button>
             </div>
             <div class="toolbar"><h2>Fotos en la galería</h2><button id="refresh-fotos-btn">Actualizar</button></div>
+            <div id="reorder-bar" class="reorder-bar" style="display:none;">
+                <span class="hint">Arrastra las fotos para reordenarlas. El orden se renumera automáticamente.</span>
+                <button id="save-order-btn" class="save-btn" disabled>Guardar orden</button>
+                <button id="cancel-order-btn">Cancelar</button>
+            </div>
             <div id="fotos-container"></div>
         </div>
 
@@ -511,30 +533,141 @@
         }
 
         // === FOTOS ===
+        var fotosData = [];
+        var fotosOrderChanged = false;
+        var dragSrc = null;
+
         async function loadFotos() {
             try {
                 var res = await fetch('/api/photos?password=' + encodeURIComponent(adminPassword));
                 var data = await res.json();
-                var container = document.getElementById('fotos-container');
-                container.innerHTML = '';
-                if (!data.photos || data.photos.length === 0) { container.innerHTML = '<div class="empty">No hay fotos. Agrega la primera arriba.</div>'; return; }
-                data.photos.forEach(function(photo) {
-                    var div = document.createElement('div');
-                    div.className = 'entry';
-                    var badge = photo.publicado ? '<span class="badge badge-aprobado">Publicada</span>' : '<span class="badge badge-pendiente-aprob">Oculta</span>';
-                    var imgPath = photo.filename.startsWith('fotos/') || photo.filename.startsWith('http') ? photo.filename : 'fotos/' + photo.filename;
-                    div.innerHTML = '<div style="display:flex;gap:12px;align-items:center;"><img src="' + imgPath + '" style="width:60px;height:60px;object-fit:cover;border-radius:8px;border:1px solid rgba(255,200,0,0.2);"><div style="flex:1;"><div class="meta"><span class="user">' + escapeHtml(photo.title) + '</span><span>Orden: ' + photo.orden + ' ' + badge + '</span></div><div class="question">' + escapeHtml(photo.description) + '</div><div style="font-size:11px;color:#666;">' + escapeHtml(photo.filename) + '</div></div><button class="btn-sm" data-id="' + photo.id + '">Eliminar</button></div>';
-                    container.appendChild(div);
-                });
-                container.querySelectorAll('.btn-sm').forEach(function(btn) {
-                    btn.addEventListener('click', async function() {
-                        if (!confirm('¿Eliminar esta foto?')) return;
-                        await fetch('/api/photos?id=' + this.dataset.id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
-                        loadFotos();
-                    });
-                });
+                fotosData = data.photos || [];
+                renderFotosGrid();
+                updateNextOrden();
             } catch (err) { console.error(err); }
         }
+
+        function updateNextOrden() {
+            var maxOrden = 0;
+            fotosData.forEach(function(p) { if (p.orden > maxOrden) maxOrden = p.orden; });
+            var nextOrden = maxOrden + 1;
+            var uploadOrden = document.getElementById('upload-orden');
+            var photoOrden = document.getElementById('photo-orden');
+            if (uploadOrden && !uploadOrden.dataset.touched) uploadOrden.value = nextOrden;
+            if (photoOrden && !photoOrden.dataset.touched) photoOrden.value = nextOrden;
+        }
+
+        function renderFotosGrid() {
+            var container = document.getElementById('fotos-container');
+            container.innerHTML = '';
+            if (fotosData.length === 0) {
+                container.innerHTML = '<div class="empty">No hay fotos. Agrega la primera arriba.</div>';
+                document.getElementById('reorder-bar').style.display = 'none';
+                return;
+            }
+            // Ordenar por orden asc
+            fotosData.sort(function(a, b) { return (a.orden || 0) - (b.orden || 0); });
+
+            var grid = document.createElement('div');
+            grid.className = 'photo-grid';
+
+            fotosData.forEach(function(photo, idx) {
+                var card = document.createElement('div');
+                card.className = 'photo-card';
+                card.draggable = true;
+                card.dataset.idx = idx;
+                var imgPath = photo.filename.startsWith('fotos/') || photo.filename.startsWith('http') ? photo.filename : 'fotos/' + photo.filename;
+                var badge = photo.publicado ? '' : '<span class="badge badge-pendiente-aprob" style="position:absolute;top:4px;left:4px;">Oculta</span>';
+                card.innerHTML = badge +
+                    '<img src="' + imgPath + '" loading="lazy">' +
+                    '<div class="photo-info"><div class="ptitle">' + escapeHtml(photo.title) + '</div><div class="porden">Orden: ' + photo.orden + '</div></div>' +
+                    '<button class="photo-del" data-id="' + photo.id + '" title="Eliminar">×</button>';
+                grid.appendChild(card);
+            });
+            container.appendChild(grid);
+
+            // Eventos delete
+            container.querySelectorAll('.photo-del').forEach(function(btn) {
+                btn.addEventListener('click', async function(e) {
+                    e.stopPropagation();
+                    if (!confirm('¿Eliminar esta foto?')) return;
+                    await fetch('/api/photos?id=' + this.dataset.id + '&password=' + encodeURIComponent(adminPassword), { method: 'DELETE' });
+                    loadFotos();
+                });
+            });
+
+            // Drag & drop
+            container.querySelectorAll('.photo-card').forEach(function(card) {
+                card.addEventListener('dragstart', function(e) {
+                    dragSrc = this;
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                });
+                card.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                    container.querySelectorAll('.photo-card').forEach(function(c) { c.classList.remove('drag-over'); });
+                });
+                card.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    if (this !== dragSrc) this.classList.add('drag-over');
+                });
+                card.addEventListener('dragleave', function() {
+                    this.classList.remove('drag-over');
+                });
+                card.addEventListener('drop', function(e) {
+                    e.preventDefault();
+                    this.classList.remove('drag-over');
+                    if (this === dragSrc) return;
+                    // Reordenar fotosData
+                    var fromIdx = parseInt(dragSrc.dataset.idx);
+                    var toIdx = parseInt(this.dataset.idx);
+                    var moved = fotosData.splice(fromIdx, 1)[0];
+                    fotosData.splice(toIdx, 0, moved);
+                    // Renumerar
+                    fotosData.forEach(function(p, i) { p.orden = i + 1; });
+                    fotosOrderChanged = true;
+                    renderFotosGrid();
+                    var bar = document.getElementById('reorder-bar');
+                    bar.style.display = 'flex';
+                    bar.classList.add('unsaved');
+                    document.getElementById('save-order-btn').disabled = false;
+                });
+            });
+        }
+
+        document.getElementById('save-order-btn').addEventListener('click', async function() {
+            var orders = fotosData.map(function(p, i) { return { id: p.id, orden: i + 1 }; });
+            try {
+                var res = await fetch('/api/photos?password=' + encodeURIComponent(adminPassword), {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ orders: orders })
+                });
+                if (res.ok) {
+                    fotosOrderChanged = false;
+                    var bar = document.getElementById('reorder-bar');
+                    bar.classList.remove('unsaved');
+                    document.getElementById('save-order-btn').disabled = true;
+                    showMsg('fotos-msg', 'Orden guardado', 'ok');
+                    loadFotos();
+                }
+            } catch (err) { showMsg('fotos-msg', 'Error al guardar', 'err'); }
+        });
+
+        document.getElementById('cancel-order-btn').addEventListener('click', function() {
+            fotosOrderChanged = false;
+            document.getElementById('reorder-bar').style.display = 'none';
+            loadFotos();
+        });
+
+        // Marcar campos orden como touched cuando el usuario los edita
+        document.addEventListener('DOMContentLoaded', function() {
+            var uo = document.getElementById('upload-orden');
+            var po = document.getElementById('photo-orden');
+            if (uo) uo.addEventListener('input', function() { this.dataset.touched = '1'; });
+            if (po) po.addEventListener('input', function() { this.dataset.touched = '1'; });
+        });
 
         document.getElementById('add-photo-btn').addEventListener('click', async function() {
             var title = document.getElementById('photo-title').value.trim();

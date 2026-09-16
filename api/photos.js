@@ -33,7 +33,7 @@ function sendJson(res, code, data) { res.writeHead(code, { 'Content-Type': 'appl
 
 module.exports = async (req, res) => {
     res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     if (req.method === 'OPTIONS') { res.writeHead(200); res.end(); return; }
 
@@ -96,6 +96,33 @@ module.exports = async (req, res) => {
             );
             sendJson(res, 200, { ok: true });
         } catch (err) { sendJson(res, 500, { error: err.message }); }
+        return;
+    }
+
+    // PATCH: reordenar fotos (batch update de orden)
+    if (req.method === 'PATCH') {
+        const buffers = [];
+        for await (const chunk of req) buffers.push(chunk);
+        let payload;
+        try { payload = JSON.parse(Buffer.concat(buffers).toString()); }
+        catch (e) { sendJson(res, 400, { error: 'Body invalido' }); return; }
+        // payload: { orders: [{id: 1, orden: 1}, {id: 2, orden: 2}, ...] }
+        if (!payload.orders || !Array.isArray(payload.orders)) {
+            sendJson(res, 400, { error: 'orders array requerido' });
+            return;
+        }
+        try {
+            // Usar transaccion para renumerar todo de una vez
+            await p.query('BEGIN');
+            for (const item of payload.orders) {
+                await p.query('UPDATE bdp_photos SET orden = $1 WHERE id = $2', [item.orden, item.id]);
+            }
+            await p.query('COMMIT');
+            sendJson(res, 200, { ok: true });
+        } catch (err) {
+            await p.query('ROLLBACK');
+            sendJson(res, 500, { error: err.message });
+        }
         return;
     }
 
