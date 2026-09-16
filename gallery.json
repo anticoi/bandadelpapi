@@ -1,29 +1,129 @@
 {
   "photos": [
-    { "title": "Gustavo El Papi Dinamarca en escena", "description": "El maestro que dio vida a La Banda del Papi", "filename": "fotos/WhatsApp Image 2026-09-15 at 17.58.13.jpeg" },
-    { "title": "Noche de cumbia en vivo", "description": "La banda en plena presentacion cumbiera", "filename": "fotos/WhatsApp Image 2026-09-15 at 17.58.13 (1).jpeg" },
-    { "title": "La banda completa en escena", "description": "Diez musicos, una sola fiesta tropical", "filename": "fotos/WhatsApp Image 2026-09-15 at 17.58.13 (2).jpeg" },
-    { "title": "Formato de gala junto al Papi", "description": "Presentacion formal con todo el conjunto", "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.37.jpeg" },
-    { "title": "Seccion de vientos", "description": "Los metales que dan el sabor tropical", "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.37 (1).jpeg" },
-    { "title": "El Papi dirigiendo", "description": "Gustavo Dinamarca liderando la orquesta", "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.37 (2).jpeg" },
-    { "title": "Cumbia bailable", "description": "Energia cumbiera conquistando al publico", "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.37 (3).jpeg" },
-    { "title": "La Banda del Papi en accion", "description": "Show en vivo lleno de ritmo y sabor", "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.38.jpeg" },
-    { "title": "La Banda del Papi en vivo", "description": "Sabor cumbiero en el escenario", "filename": "fotos/495444589_10232634968528875_8115086403453125660_n.jpg" },
-    { "title": "Pura energia tropical", "description": "La banda haciendo vibrar al publico", "filename": "fotos/495726050_10232607704327287_22101719190653495_n.jpg" },
-    { "title": "Noche de cumbia", "description": "Show en vivo lleno de ritmo", "filename": "fotos/496007315_10232634968808882_208426717945467199_n.jpg" },
-    { "title": "La Facultad de la Cumbia", "description": "En plena presentacion", "filename": "fotos/496048617_10232607705487316_3980163660233625827_n.jpg" },
-    { "title": "Fiesta cumbiera", "description": "El publico no para de bailar", "filename": "fotos/497625644_10232634964248768_6606393875427959425_n.jpg" },
-    { "title": "Sabor tropical", "description": "Cumbia bailable en su maxima expresion", "filename": "fotos/502579636_10233179145172951_9119464622048088830_n.jpg" },
-    { "title": "Ensayo de la banda", "description": "Preparando el proximo show", "filename": "fotos/508654715_10233179146172976_1977973840336288206_n.jpg" },
-    { "title": "Tras bambalinas", "description": "Momentos antes de salir al escenario", "filename": "fotos/509111774_10233179146212977_7603651411637634165_n.jpg" },
-    { "title": "Conectando con el publico", "description": "La cumbia que une a todos", "filename": "fotos/509599412_10233179146532985_7651638498864977851_n.jpg" },
-    { "title": "Show en vivo", "description": "La Banda del Papi en accion", "filename": "fotos/642910593_10236613975081552_5191637354387699497_n.jpg" },
-    { "title": "Ritmo y sazon", "description": "Pura cumbia tropical", "filename": "fotos/644303402_10236613975961574_685479568741377503_n.jpg" },
-    { "title": "La banda completa", "description": "Todos los musicos en escena", "filename": "fotos/644774055_10236613974881547_3533049283005318428_n.jpg" },
-    { "title": "Captura del show", "description": "Un momento inolvidable del concierto", "filename": "fotos/Captura de pantalla 2026-09-15 a la(s) 5.17.30 p.m..png" },
-    { "title": "Fiesta encendida", "description": "El ambiente que solo La Banda del Papi crea", "filename": "fotos/Captura de pantalla 2026-09-15 a la(s) 5.18.25 p.m..png" },
-    { "title": "Cumbia en vivo", "description": "La banda tocando los exitos", "filename": "fotos/Captura de pantalla 2026-09-15 a la(s) 5.18.44 p.m..png" },
-    { "title": "Momento del show", "description": "Energia cumbiera en el escenario", "filename": "fotos/Captura de pantalla 2026-09-15 a la(s) 5.18.55 p.m..png" },
-    { "title": "El gran final", "description": "Cierre inolvidable de la noche cumbiera", "filename": "fotos/Captura de pantalla 2026-09-15 a la(s) 5.19.12 p.m..png" }
+    {
+      "title": "Gustavo El Papi Dinamarca en escena",
+      "description": "El maestro que dio vida a La Banda del Papi",
+      "filename": "fotos/WhatsApp Image 2026-09-15 at 17.58.13.jpeg"
+    },
+    {
+      "title": "Noche de cumbia en vivo",
+      "description": "La banda en plena presentacion cumbiera",
+      "filename": "fotos/WhatsApp Image 2026-09-15 at 17.58.13 (1).jpeg"
+    },
+    {
+      "title": "La banda completa en escena",
+      "description": "Diez musicos, una sola fiesta tropical",
+      "filename": "fotos/WhatsApp Image 2026-09-15 at 17.58.13 (2).jpeg"
+    },
+    {
+      "title": "Formato de gala junto al Papi",
+      "description": "Presentacion formal con todo el conjunto",
+      "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.37.jpeg"
+    },
+    {
+      "title": "Seccion de vientos",
+      "description": "Los metales que dan el sabor tropical",
+      "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.37 (1).jpeg"
+    },
+    {
+      "title": "El Papi dirigiendo",
+      "description": "Gustavo Dinamarca liderando la orquesta",
+      "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.37 (2).jpeg"
+    },
+    {
+      "title": "Cumbia bailable",
+      "description": "Energia cumbiera conquistando al publico",
+      "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.37 (3).jpeg"
+    },
+    {
+      "title": "La Banda del Papi en accion",
+      "description": "Show en vivo lleno de ritmo y sabor",
+      "filename": "fotos/WhatsApp Image 2026-09-15 at 17.59.38.jpeg"
+    },
+    {
+      "title": "La Banda del Papi en vivo",
+      "description": "Sabor cumbiero en el escenario",
+      "filename": "fotos/495444589_10232634968528875_8115086403453125660_n.jpg"
+    },
+    {
+      "title": "Pura energia tropical",
+      "description": "La banda haciendo vibrar al publico",
+      "filename": "fotos/495726050_10232607704327287_22101719190653495_n.jpg"
+    },
+    {
+      "title": "Noche de cumbia",
+      "description": "Show en vivo lleno de ritmo",
+      "filename": "fotos/496007315_10232634968808882_208426717945467199_n.jpg"
+    },
+    {
+      "title": "La Facultad de la Cumbia",
+      "description": "En plena presentacion",
+      "filename": "fotos/496048617_10232607705487316_3980163660233625827_n.jpg"
+    },
+    {
+      "title": "Fiesta cumbiera",
+      "description": "El publico no para de bailar",
+      "filename": "fotos/497625644_10232634964248768_6606393875427959425_n.jpg"
+    },
+    {
+      "title": "Sabor tropical",
+      "description": "Cumbia bailable en su maxima expresion",
+      "filename": "fotos/502579636_10233179145172951_9119464622048088830_n.jpg"
+    },
+    {
+      "title": "Ensayo de la banda",
+      "description": "Preparando el proximo show",
+      "filename": "fotos/508654715_10233179146172976_1977973840336288206_n.jpg"
+    },
+    {
+      "title": "Tras bambalinas",
+      "description": "Momentos antes de salir al escenario",
+      "filename": "fotos/509111774_10233179146212977_7603651411637634165_n.jpg"
+    },
+    {
+      "title": "Conectando con el publico",
+      "description": "La cumbia que une a todos",
+      "filename": "fotos/509599412_10233179146532985_7651638498864977851_n.jpg"
+    },
+    {
+      "title": "Show en vivo",
+      "description": "La Banda del Papi en accion",
+      "filename": "fotos/642910593_10236613975081552_5191637354387699497_n.jpg"
+    },
+    {
+      "title": "Ritmo y sazon",
+      "description": "Pura cumbia tropical",
+      "filename": "fotos/644303402_10236613975961574_685479568741377503_n.jpg"
+    },
+    {
+      "title": "La banda completa",
+      "description": "Todos los musicos en escena",
+      "filename": "fotos/644774055_10236613974881547_3533049283005318428_n.jpg"
+    },
+    {
+      "title": "Captura del show",
+      "description": "Un momento inolvidable del concierto",
+      "filename": "fotos/Captura_de_pantalla_2026-09-15_a_la(s)_5.17.30p.m..png"
+    },
+    {
+      "title": "Fiesta encendida",
+      "description": "El ambiente que solo La Banda del Papi crea",
+      "filename": "fotos/Captura_de_pantalla_2026-09-15_a_la(s)_5.18.25p.m..png"
+    },
+    {
+      "title": "Cumbia en vivo",
+      "description": "La banda tocando los exitos",
+      "filename": "fotos/Captura_de_pantalla_2026-09-15_a_la(s)_5.18.44p.m..png"
+    },
+    {
+      "title": "Momento del show",
+      "description": "Energia cumbiera en el escenario",
+      "filename": "fotos/Captura_de_pantalla_2026-09-15_a_la(s)_5.18.55p.m..png"
+    },
+    {
+      "title": "El gran final",
+      "description": "Cierre inolvidable de la noche cumbiera",
+      "filename": "fotos/Captura_de_pantalla_2026-09-15_a_la(s)_5.19.12p.m..png"
+    }
   ]
 }
